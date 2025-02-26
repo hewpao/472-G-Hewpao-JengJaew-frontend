@@ -1,12 +1,15 @@
+import { User } from "next-auth";
+
 export interface Product {
-    traveler: any;
+    traveler?: User | null;
     id: string;
     name: string;
-    description: string;
+    description?: string|null;
     category: string;
     price: number;
     quantity: number;
     image: string;
-    deadline: string;
+    status: string;
+    deadline?: string|null;
   }
   

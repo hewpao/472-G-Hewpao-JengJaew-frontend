@@ -1,30 +1,33 @@
 import { Product } from "@/interfaces/Product";
+import { mockUsers } from "./users";
 
 export const products: Product[] = [
   {
-    id: 1,
+    id: "1",
     name: "AirPods Max",
-    description:
-      "High-fidelity over-ear headphones with active noise cancellation.",
+    description: "High-fidelity over-ear headphones with active noise cancellation.",
     category: "Electronics",
     price: 549.0,
     quantity: 10,
     image: "/images/airpods-max.png",
     deadline: new Date().toISOString(),
+    traveler: mockUsers[0],
+    status: "Orders", // เพิ่ม status
   },
   {
-    id: 2,
+    id: "2",
     name: "THE QUENCHER H2.0 FLOWSTATE™ TUMBLER | 40 OZ",
-    description:
-      "Large insulated tumbler with a FlowState™ lid for ultimate hydration.",
+    description: "Large insulated tumbler with a FlowState™ lid for ultimate hydration.",
     category: "Drinkware",
     price: 45.0,
     quantity: 20,
     image: "/images/airpods-max.png",
     deadline: new Date().toISOString(),
+    traveler: mockUsers[2],
+    status: "Offers", // เพิ่ม status
   },
   {
-    id: 3,
+    id: "3",
     name: "Apple Watch Ultra 2",
     description: "Rugged smartwatch with advanced GPS and fitness tracking.",
     category: "Wearables",
@@ -32,20 +35,23 @@ export const products: Product[] = [
     quantity: 5,
     image: "/images/airpods-max.png",
     deadline: new Date().toISOString(),
+    traveler: mockUsers[2],
+    status: "Deliver", // เพิ่ม status
   },
   {
-    id: 4,
+    id: "4",
     name: "Garmin Venu 2 Plus",
-    description:
-      "Premium GPS smartwatch with AMOLED display and health tracking.",
+    description: "Premium GPS smartwatch with AMOLED display and health tracking.",
     category: "Wearables",
     price: 449.99,
     quantity: 8,
     image: "/images/airpods-max.png",
     deadline: new Date().toISOString(),
+    traveler: mockUsers[3],
+    status: "Deliver", // เพิ่ม status
   },
   {
-    id: 5,
+    id: "5",
     name: "Takis Mini Fuego and Nitro Rolled Tortilla Chips",
     description: "Spicy rolled tortilla chips in mini packs.",
     category: "Snacks",
@@ -53,20 +59,23 @@ export const products: Product[] = [
     quantity: 50,
     image: "/images/airpods-max.png",
     deadline: new Date().toISOString(),
+    traveler: mockUsers[4],
+    status: "Orders", // เพิ่ม status
   },
   {
-    id: 6,
+    id: "6",
     name: "Harry Potter Bertie Botts",
-    description:
-      "Jelly beans with unpredictable flavors inspired by Harry Potter.",
+    description: "Jelly beans with unpredictable flavors inspired by Harry Potter.",
     category: "Candy",
     price: 18.98,
     quantity: 30,
     image: "/images/airpods-max.png",
     deadline: new Date().toISOString(),
+    traveler: undefined,
+    status: "Offers", // เพิ่ม status
   },
   {
-    id: 7,
+    id: "7",
     name: "COROS PACE 2 Sport Watch GPS",
     description: "Lightweight GPS sports watch for runners and athletes.",
     category: "Wearables",
@@ -74,9 +83,11 @@ export const products: Product[] = [
     quantity: 12,
     image: "/images/airpods-max.png",
     deadline: new Date().toISOString(),
+    traveler: undefined,
+    status: "Deliver", // เพิ่ม status
   },
   {
-    id: 8,
+    id: "8",
     name: "Bengay Ultra Strength Pain Relieving Cream",
     description: "Pain relief cream for sore muscles and joint pain.",
     category: "Health",
@@ -84,5 +95,31 @@ export const products: Product[] = [
     quantity: 25,
     image: "/images/airpods-max.png",
     deadline: new Date().toISOString(),
+    traveler: mockUsers[0],
+    status: "Delivered", // เพิ่ม status
+  },
+  {
+    traveler: mockUsers[0],
+    id: "9",
+    name: "Travel to Japan",
+    description: "A wonderful trip to Tokyo and Kyoto.",
+    category: "Travel",
+    price: 1500,
+    quantity: 2,
+    image: "/images/airpods-max.png",
+    deadline: "2024-12-31",
+    status: "Deliver",
+  },
+  {
+    traveler: mockUsers[0],
+    id: "10",
+    name: "Hiking Adventure",
+    description: "Explore the beautiful mountains.",
+    category: "Adventure",
+    price: 800,
+    quantity: 1,
+    image: "/images/airpods-max.png",
+    deadline: "2024-10-15",
+    status: "Offers", // เพิ่ม status
   },
 ];
