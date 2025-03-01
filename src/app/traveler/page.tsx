@@ -20,7 +20,7 @@ function page() {
         <button
           type="button"
           className="bg-blue-500 text-white w-full py-3 rounded-lg hover:bg-blue-600 transition-colors font-medium flex items-center justify-center gap-2"
-          onClick={handleAddTrip} // เพิ่ม onClick handler
+          onClick={handleAddTrip}
         >
           Add trip
         </button>

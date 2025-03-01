@@ -48,17 +48,29 @@ function page() {
       {/* Order List */}
       <div className="px-8 bg-gray-50 rounded pt-[32px] pb-[32px]">
         <h1 className="text-3xl font-bold text-gray-900 mb-6">Your Trip</h1>
-        <div className="mb-4 flex justify-between">
-          <button className="text-gray-600" onClick={() => setSelectedStatus("Orders")}>
+        <div className="mb-4 flex ">
+          <button 
+            className={`w-full py-2 rounded-l border-r border-gray-300 text-black-600 hover:bg-gray-200 
+              ${selectedStatus === "Orders" ? "bg-gray-200" : ""}`} 
+            onClick={() => setSelectedStatus("Orders")}>
             {orderCount} Orders
           </button>
-          <button className="text-gray-600" onClick={() => setSelectedStatus("Offers")}>
+          <button 
+            className={`w-full py-2 rounded-l border-r border-gray-300 text-black-600 hover:bg-gray-200 
+              ${selectedStatus === "Offers" ? "bg-gray-200" : ""}`} 
+            onClick={() => setSelectedStatus("Offers")}>
             {offerCount} Offers
           </button>
-          <button className="text-gray-600" onClick={() => setSelectedStatus("Deliver")}>
+          <button 
+            className={`w-full py-2 rounded-l border-r border-gray-300 text-black-600 hover:bg-gray-200 
+            ${selectedStatus === "Deliver" ? "bg-gray-200" : ""}`}
+            onClick={() => setSelectedStatus("Deliver")}>
             {toDeliverCount} To deliver
           </button>
-          <button className="text-gray-600" onClick={() => setSelectedStatus("Delivered")}>
+          <button 
+            className={`w-full py-2 rounded-l border-r border-gray-300 text-black-600 hover:bg-gray-200 
+              ${selectedStatus === "Delivered" ? "bg-gray-200" : ""}`} 
+            onClick={() => setSelectedStatus("Delivered")}>
             {deliveredCount} Delivered
           </button>
         </div>
