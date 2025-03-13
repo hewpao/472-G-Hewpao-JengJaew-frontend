@@ -8,7 +8,10 @@ import Link from 'next/link';
 function Page(){
     const router = useParams();
     const { id } = router;
+    
     const { data: product, isLoading: loading } = useGetProductRequestByID(Number(id));
+    const mutation = useUpdateProductRequest(Number(id));    
+    
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState("");
     const [editedDesc, setEditedDesc] = useState("");
@@ -17,7 +20,6 @@ function Page(){
 
     const categories = ["Electronics", "Fashion", "Food", "Books", "Other"];
 
-    const mutation = useUpdateProductRequest(Number(id));
     React.useEffect(() => {
             if(product?.['product-request']){
                 setEditedName(product?.['product-request']?.name);

@@ -102,9 +102,13 @@ const updateProductRequest = async (productData: UpdateProductRequestDTO, id: nu
 };
 
 const useUpdateProductRequest = (id: number) => {
+  const queryClient = useQueryClient(); 
   return useMutation({
       mutationFn: async (productData : UpdateProductRequestDTO) =>
           updateProductRequest(productData, id),
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["productRquests", id] });
+      },
   });
 };
 

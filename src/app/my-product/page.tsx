@@ -12,7 +12,7 @@ const ProductList: React.FC<{products: GetProductRequestResponseDTO[];}> = ({ pr
       <div className="grid grid-cols-2 gap-6">
         {products.map((product) => (
           <Link
-            key={product.user_id}
+            key={product.id}
             href={`/my-product/${product.id}`}
             passHref
           >
