@@ -55,7 +55,7 @@ function ProductCard() {
 
             {isTravelerPage && (
               <div className="mt-3">
-                <MakeOfferButton />
+                <MakeOfferButton productRequestID={0} />
               </div>
             )}
           </div>
