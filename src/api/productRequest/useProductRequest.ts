@@ -52,9 +52,7 @@ const getProductRquestsByID = async (id: number) => {
 const getPaginatedProductRequests = async (page: number, limit: number) => {
   const session = await getSession();
   const { data } = await axiosInstance.get<
-    GetPaginatedProductRequestRespnoseDTO<
-      GetPaginatedProductRequestRespnoseDTO<GetProductRequestResponseDTO>
-    >
+    GetPaginatedProductRequestRespnoseDTO<GetProductRequestResponseDTO>
   >(`/product-requests/get?page=${page}&limit=${limit}`, {
     headers: {
       Authorization: `Bearer ${session?.user?.access_token}`,
