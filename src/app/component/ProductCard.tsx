@@ -33,7 +33,6 @@ function ProductCard() {
               className="rounded object-contain"
             />
           </div>
-
           {/* Product Info */}
           <h2 className="mt-4 font-semibold text-gray-800">{product.name}</h2>
 
