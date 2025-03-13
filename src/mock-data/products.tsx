@@ -1,145 +1,35 @@
-import { Product } from "@/interfaces/Product";
+import { Product_Request } from "@/interfaces/Product-Request";
 import { mockUsers } from "./users";
+import { DetailOfProductRequestResponseDTO } from "@/dtos/Product-Request";
 
-export const products: Product[] = [
-  {
+const mock_product: DetailOfProductRequestResponseDTO={
+  id: "1",
+  desc: "I need a new phone",
+  images: "https://images.unsplash.com/photo-1606785566284-1f0e2e8c2d6f",
+  budget: 1000,
+  quantity: 1,
+  category: "Electronics",
+  user_id: "1",
+  offers: [],
+  selected_offer: {
     id: "1",
-    name: "AirPods Max",
-    description: "High-fidelity over-ear headphones with active noise cancellation.",
-    category: "Electronics",
-    price: 549.0,
-    quantity: 10,
-    image: "/images/airpods-max.png",
-    deadline: new Date().toISOString(),
-    traveler: mockUsers[0],
-    status: "Orders", // เพิ่ม status
-    product_from: "California, United States",
-    product_to: "Bangkok, Thailand",
+    product_request_id: "1",
+    user_id: "2",
+    offer_date: "2022-01-01",
+    product_request: undefined,
+    user: undefined
   },
-  {
-    id: "2",
-    name: "THE QUENCHER H2.0 FLOWSTATE™ TUMBLER | 40 OZ",
-    description: "Large insulated tumbler with a FlowState™ lid for ultimate hydration.",
-    category: "Drinkware",
-    price: 45.0,
-    quantity: 20,
-    image: "/images/airpods-max.png",
-    deadline: new Date().toISOString(),
-    traveler: mockUsers[2],
-    status: "Offers", // เพิ่ม status
-    product_from: "New York, United States",
-    product_to: "Tokyo, Japan",
-  },
-  {
-    id: "3",
-    name: "Apple Watch Ultra 2",
-    description: "Rugged smartwatch with advanced GPS and fitness tracking.",
-    category: "Wearables",
-    price: 799.0,
-    quantity: 5,
-    image: "/images/airpods-max.png",
-    deadline: new Date().toISOString(),
-    traveler: mockUsers[2],
-    status: "Deliver", // เพิ่ม status
-    product_from: "Singapore City, Singapore",
-    product_to: "Chiang Mai, Thailand",
-  },
-  {
-    id: "4",
-    name: "Garmin Venu 2 Plus",
-    description: "Premium GPS smartwatch with AMOLED display and health tracking.",
-    category: "Wearables",
-    price: 449.99,
-    quantity: 8,
-    image: "/images/airpods-max.png",
-    deadline: new Date().toISOString(),
-    traveler: mockUsers[3],
-    status: "Deliver", // เพิ่ม status
-    product_from: "Munich, Germany",
-    product_to: "Phuket, Thailand",
-  },
-  {
-    id: "5",
-    name: "Takis Mini Fuego and Nitro Rolled Tortilla Chips",
-    description: "Spicy rolled tortilla chips in mini packs.",
-    category: "Snacks",
-    price: 13.53,
-    quantity: 50,
-    image: "/images/airpods-max.png",
-    deadline: new Date().toISOString(),
-    traveler: mockUsers[4],
-    status: "Orders", // เพิ่ม status
-    product_from: "Mexico City, Mexico",
-    product_to: "Pattaya, Thailand",
-  },
-  {
-    id: "6",
-    name: "Harry Potter Bertie Botts",
-    description: "Jelly beans with unpredictable flavors inspired by Harry Potter.",
-    category: "Candy",
-    price: 18.98,
-    quantity: 30,
-    image: "/images/airpods-max.png",
-    deadline: new Date().toISOString(),
-    traveler: undefined,
-    status: "Offers", // เพิ่ม status
-    product_from: "London, United Kingdom",
-    product_to: "Krabi, Thailand",
-  },
-  {
-    id: "7",
-    name: "COROS PACE 2 Sport Watch GPS",
-    description: "Lightweight GPS sports watch for runners and athletes.",
-    category: "Wearables",
-    price: 199.0,
-    quantity: 12,
-    image: "/images/airpods-max.png",
-    deadline: new Date().toISOString(),
-    traveler: undefined,
-    status: "Deliver", // เพิ่ม status
-    product_from: "Taipei, Taiwan",
-    product_to: "Chiang Rai, Thailand",
-  },
-  {
-    id: "8",
-    name: "Bengay Ultra Strength Pain Relieving Cream",
-    description: "Pain relief cream for sore muscles and joint pain.",
-    category: "Health",
-    price: 16.97,
-    quantity: 25,
-    image: "/images/airpods-max.png",
-    deadline: new Date().toISOString(),
-    traveler: mockUsers[0],
-    status: "Delivered", // เพิ่ม status
-    product_from: "Toronto, Canada",
-    product_to: "Hua Hin, Thailand",
-  },
-  {
-    traveler: mockUsers[0],
-    id: "9",
-    name: "Travel to Japan",
-    description: "A wonderful trip to Tokyo and Kyoto.",
-    category: "Travel",
-    price: 1500,
-    quantity: 2,
-    image: "/images/airpods-max.png",
-    deadline: "2024-12-31",
-    status: "Deliver",
-    product_from: "Bangkok, Thailand",
-    product_to: "Kyoto, Japan",
-  },
-  {
-    traveler: mockUsers[0],
-    id: "10",
-    name: "Hiking Adventure",
-    description: "Explore the beautiful mountains.",
-    category: "Adventure",
-    price: 800,
-    quantity: 1,
-    image: "/images/airpods-max.png",
-    deadline: "2024-10-15",
-    status: "Offers", // เพิ่ม status
-    product_from: "Chiang Mai, Thailand",
-    product_to: "Kathmandu, Nepal",
-  },
+  transactions: [],
+  deliver_from: "",
+  deliver_to: "",
+  delivery_status: "",
+  check_service: false,
+  created_at: "",
+  updated_at: "",
+  deleted_at: ""
+}
+
+
+export const products: DetailOfProductRequestResponseDTO[] = [
+  mock_product,
 ];

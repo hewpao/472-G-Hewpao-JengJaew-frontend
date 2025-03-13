@@ -2,42 +2,46 @@
 import React, { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { products } from "@/mock-data/products";
-import { Product } from "@/interfaces/Product";
+import { Product_Request } from "@/interfaces/Product-Request";
+import { useSession } from "next-auth/react";
 
 function page() {
+
+  const session = useSession();
+  
   const params = useParams();
   const { id } = params;
   const [selectedStatus, setSelectedStatus] = useState<string>("Orders");
-  const [productList, setProductList] = useState<Product[]>(products);
+  const [productList, setProductList] = useState<Product_Request[]>(products);
 
   const orderCount = useMemo(() =>
-    productList.filter((p) => p.status === "Orders" && String(p.traveler?.id) === String(id)).length,
+    productList.filter((p) => p.delivery_status === "Orders" && String(p.user_id) === session.data?.user?.id).length,
     [productList, id]
   );
   const offerCount = useMemo(() =>
-    productList.filter((p) => p.status === "Offers" && String(p.traveler?.id) === String(id)).length,
+    productList.filter((p) => p.delivery_status === "Offers" && String(p.user_id) === session.data?.user?.id).length,
     [productList, id]
   );
   const toDeliverCount = useMemo(() =>
-    productList.filter((p) => p.status === "Deliver" && String(p.traveler?.id) === String(id)).length,
+    productList.filter((p) => p.delivery_status === "Deliver" && String(p.user_id) === session.data?.user?.id).length,
     [productList, id]
   );
   const deliveredCount = useMemo(() =>
-    productList.filter((p) => p.status === "Delivered" && String(p.traveler?.id) === String(id)).length,
+    productList.filter((p) => p.delivery_status === "Delivered" && String(p.user_id) === session.data?.user?.id).length,
     [productList, id]
   );
 
   const filteredProducts = useMemo(() => {
     if (selectedStatus) {
       return productList.filter(
-        (product) => product.status === selectedStatus && String(product.traveler?.id) === String(id)
+        (product) => product.delivery_status === selectedStatus && String(product.user_id) === session.data?.user?.id
       );
     } else {
-      return productList.filter((product) => product.status === "Orders" && String(product.traveler?.id) === String(id));
+      return productList.filter((product) => product.delivery_status === "Orders" && String(product.user_id) === session.data?.user?.id);
     }
   }, [productList, id, selectedStatus]);
 
-  const handleUpdateProduct = (updatedProduct: Product) => {
+  const handleUpdateProduct = (updatedProduct: Product_Request) => {
     setProductList((prevProducts) =>
       prevProducts.map((product) => (product.id === updatedProduct.id ? updatedProduct : product))
     );
@@ -84,17 +88,17 @@ function page() {
   );
 }
 
-const ProductItem = ({ product, onUpdateProduct }: { product: Product; onUpdateProduct: (updatedProduct: Product) => void }) => {
-    const [currentStatus, setCurrentStatus] = useState<string>(product.status);
+const ProductItem = ({ product, onUpdateProduct }: { product: Product_Request; onUpdateProduct: (updatedProduct: Product_Request) => void }) => {
+    const [currentStatus, setCurrentStatus] = useState<string>(product.delivery_status);
     const [isEditingStatus, setIsEditingStatus] = useState<boolean>(false);
-    const [newStatus, setNewStatus] = useState<string>(product.status);
+    const [newStatus, setNewStatus] = useState<string>(product.delivery_status);
   
     const handleEditStatus = () => {
       setIsEditingStatus(true);
     };
   
     const handleSaveStatus = () => {
-      onUpdateProduct({ ...product, status: newStatus });
+      onUpdateProduct({ ...product, delivery_status: newStatus });
       setCurrentStatus(newStatus);
       setIsEditingStatus(false);
     };
@@ -110,11 +114,11 @@ const ProductItem = ({ product, onUpdateProduct }: { product: Product; onUpdateP
           <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-md" />
         </div>
         <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
-        <p className="text-gray-600 mb-2">{product.description}</p>
-        <p className="text-gray-800 font-medium">Price: ${product.price}</p>
+        <p className="text-gray-600 mb-2">{product.desc}</p>
+        <p className="text-gray-800 font-medium">Price: ${product.budget}</p>
         <p className="text-gray-600 mb-2">Status: {currentStatus}</p>
-        {product.deadline && (
-          <p className="text-sm text-gray-500">Deadline: {new Date(product.deadline).toLocaleDateString()}</p>
+        {product.offers && (
+          <p className="text-sm text-gray-500">Deadline: </p>
         )}
   
         {!isEditingStatus ? (

@@ -67,22 +67,7 @@ const Navbar = () => {
               Travel
             </Link>
           </div>
-          <div>
-            <Link
-            href="/product"
-            className={`relative font-bold ${
-              pathname === "/product"
-                ? "text-blue-500"
-                : "text-gray-500"
-            } hover:text-blue-500 after:block after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[2px] after:bg-blue-500 after:transition-transform after:duration-200 ${
-              pathname === "/product"
-                ? "after:scale-x-100"
-                : "after:scale-x-0"
-            } hover:after:scale-x-100 focus:after:scale-x-100`}
-            >
-              Product
-            </Link>
-          </div>
+
         </div>
         <div className="flex justify-end">
           {session.data && session.data.user ? (

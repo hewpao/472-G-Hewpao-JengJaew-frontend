@@ -16,6 +16,7 @@ function ProductCard() {
     return <div>..Loading</div>;
   }
 
+<<<<<<< HEAD
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {prods2!.data.map((product) => (
@@ -33,6 +34,23 @@ function ProductCard() {
               className="rounded object-contain"
             />
           </div>
+=======
+                    <div className="mt-auto">
+                        <div className="mt-2 text-sm">
+                            <div className="flex items-center text-gray-600">
+                                <span className="font-medium">From:</span>
+                                <span className="ml-2">{product.product_from}</span>
+                            </div>
+                            <div className="flex items-center text-gray-600 mt-1 mb-2">
+                                <span className="font-medium">To:</span>
+                                <span className="ml-2">{product.product_to}</span>
+                            </div>
+                        </div>
+                        <p className="text-gray-600 mb-2">
+                            Retailer price:{" "}
+                            <span className="font-bold text-gray-900">{product.budget}</span>
+                        </p>
+>>>>>>> 55abb75 (Re-new product to my-product)
 
           {/* Product Info */}
           <h2 className="mt-4 font-semibold text-gray-800">{product.name}</h2>

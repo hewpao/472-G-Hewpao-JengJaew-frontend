@@ -45,7 +45,7 @@ const ProductDetailPage = () => {
 
   return (
     <div className="px-8 bg-gray-50 rounded pt-[32px] pb-[32px]">
-      <Link href="/product" className="text-blue-500 hover:underline mb-4">
+      <Link href="/my-product" className="text-blue-500 hover:underline mb-4">
         ← Back to Product List
       </Link>
 
@@ -84,27 +84,17 @@ const ProductDetailPage = () => {
             {isEditing ? (
               <textarea
                 name="description"
-                value={editedProduct.description}
+                value={editedProduct.desc}
                 onChange={handleChange}
                 className="w-full p-2 border rounded-md mt-2"
               />
             ) : (
-              <p className="text-gray-700 mt-2">{product.description}</p>
+              <p className="text-gray-700 mt-2">{product.desc}</p>
             )}
           </div>
 
           <div className="mt-2">
-            {isEditing ? (
-              <input
-                type="number"
-                name="price"
-                value={editedProduct.price}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md mt-2"
-              />
-            ) : (
-              <p className="text-gray-700 mt-2">Price: {product.price ?? "N/A"}</p>
-            )}
+              <p className="text-gray-700 mt-2">Price: {product.budget ?? "N/A"}</p>
           </div>
 
           <div className="mt-2">
@@ -122,25 +112,15 @@ const ProductDetailPage = () => {
           </div>
 
           <div className="mt-2">
-            {isEditing ? (
-              <input
-                type="date"
-                name="deadline"
-                value={editedProduct.deadline ? new Date(editedProduct.deadline).toLocaleDateString() : ""}
-                onChange={handleChange}
-                className="w-full p-2 border rounded-md mt-2"
-              />
-            ) : (
-              <p className="text-gray-700 mt-2">Deadline: {product.deadline ? new Date(product.deadline).toLocaleDateString() : "No deadline"}</p>
-            )}
+              <p className="text-gray-700 mt-2">Deadline: {product.selected_offer?.offer_date ? new Date(product.selected_offer.offer_date).toLocaleDateString() : "No deadline"}</p>
           </div>
 
           {/* Traveler Info */}
-          {product.traveler ? (
+          {product.selected_offer?.user ? (
             <div className="mt-4 p-4 border rounded-lg bg-gray-50">
               <h2 className="text-lg font-semibold">Offered by</h2>
-              <p><strong>Name:</strong> {product.traveler.name}</p>
-              <p><strong>Contact:</strong> {product.traveler.contact}</p>
+              <p><strong>Name:</strong> {product.selected_offer.user.name}</p>
+              <p><strong>Contact:</strong> {product.selected_offer.user.phone_number}</p>
             </div>
           ) : (
             <p className="text-sm text-gray-500 mt-4">
