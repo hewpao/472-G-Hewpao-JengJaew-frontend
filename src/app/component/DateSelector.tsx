@@ -40,7 +40,7 @@ export default function DateSelector({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const datePickerRef = useRef<any>(null);
-  
+
   // API hook
   const createOffer = useCreateOffer();
 
@@ -75,7 +75,7 @@ export default function DateSelector({
       if (isCalendarOpen) {
         const target = event.target as HTMLElement;
         const datePickerElement = datePickerRef.current;
-        
+
         // Check if click is within the datepicker component
         if (datePickerElement && !datePickerElement.contains(target)) {
           // For clicks outside the datepicker, prevent event bubbling
@@ -106,22 +106,22 @@ export default function DateSelector({
     setIsSubmitting(true);
     try {
       console.log("Submitting date:", data.returnDate);
-      
+
       // Create the offer
       await createOfferHandler(data.returnDate);
-      
+
       // Call the callback if provided
       if (onSubmitDates) {
         onSubmitDates({
           returnDate: data.returnDate,
         });
       }
-      
+
       // Close the popup
       if (onClose) {
         onClose();
       }
-      
+
     } catch (error) {
       console.error("Error submitting offer:", error);
       alert(`Failed to create offer: ${error}`);
@@ -132,13 +132,13 @@ export default function DateSelector({
 
   // Calculate date options for quick selection
   const today = new Date();
-  
+
   const nextWeek = new Date(today);
   nextWeek.setDate(today.getDate() + 7);
-  
+
   const in2Weeks = new Date(today);
   in2Weeks.setDate(today.getDate() + 14);
-  
+
   const nextMonth = new Date(today);
   nextMonth.setMonth(today.getMonth() + 1);
 
@@ -178,12 +178,30 @@ export default function DateSelector({
     return day === 0 || day === 6;
   };
 
+  const createOffer = useCreateOffer();
+
+  const createOfferHandler = async (offerDate: string) => {
+    const offerData: CreateOfferRequestDTO = {
+      product_request_id: productRequestID,
+      offer_date: new Date(offerDate),
+    };
+
+    await createOffer.mutateAsync(offerData, {
+      onSuccess: () => {
+        alert("done");
+      },
+      onError: (error) => {
+        alert(`failed ${error}`);
+      },
+    });
+  };
+
   return (
     <div className={`max-w-lg mx-auto ${className} ${isCalendarOpen ? 'relative z-50' : ''}`} ref={datePickerRef}>
       {/* Modal overlay to prevent interaction when calendar is open */}
       {isCalendarOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-20" 
+        <div
+          className="fixed inset-0 bg-black bg-opacity-20"
           onClick={(e) => {
             e.stopPropagation();
             e.preventDefault();
@@ -191,7 +209,7 @@ export default function DateSelector({
           style={{ zIndex: 40 }}
         />
       )}
-      
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 relative" style={{ zIndex: 50 }}>
         {/* Quick select options */}
         <div className="mb-4">
@@ -231,11 +249,11 @@ export default function DateSelector({
               placeholderText="Select return date"
               dayClassName={date => {
                 // Highlight current date selection
-                const isSelected = returnDate && 
+                const isSelected = returnDate &&
                   date.getDate() === returnDate.getDate() &&
                   date.getMonth() === returnDate.getMonth() &&
                   date.getFullYear() === returnDate.getFullYear();
-                
+
                 if (isSelected) return "bg-blue-500 text-white rounded-full";
                 if (isWeekend(date)) return "bg-blue-50 rounded-full";
                 return undefined;
@@ -268,7 +286,7 @@ export default function DateSelector({
               }}
             />
             <CalendarIcon className="absolute left-2 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                        
+
           </div>
           {errors.returnDate && (
             <p className="text-red-500 text-sm mt-1">{errors.returnDate.message}</p>
@@ -294,11 +312,10 @@ export default function DateSelector({
           <button
             type="submit"
             disabled={isSubmitting || !isValid}
-            className={`px-4 py-3 rounded flex-1 transition-colors ${
-              isValid 
-                ? "bg-blue-500 text-white hover:bg-blue-600" 
+            className={`px-4 py-3 rounded flex-1 transition-colors ${isValid
+                ? "bg-blue-500 text-white hover:bg-blue-600"
                 : "bg-blue-300 text-white cursor-not-allowed"
-            }`}
+              }`}
           >
             {isSubmitting ? (
               <span className="flex items-center justify-center">
