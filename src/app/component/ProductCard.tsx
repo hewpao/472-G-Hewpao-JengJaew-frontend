@@ -3,6 +3,10 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import MakeOfferButton from "./MakeOfferBtn";
 import { useGetPaginatedProductRequests } from "@/api/productRequest/useProductRequest";
+<<<<<<< HEAD
+=======
+import { GetProductRequestResponseDTO } from "@/dtos/productRequest";
+>>>>>>> ad24cdb (rebase: from develop)
 
 function ProductCard() {
   const pathname = usePathname();
@@ -18,7 +22,11 @@ function ProductCard() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+<<<<<<< HEAD
       {prods2!.data.map((product) => (
+=======
+      {prods2!.data.map((product: GetProductRequestResponseDTO) => (
+>>>>>>> ad24cdb (rebase: from develop)
         <div
           key={product.id}
           className="border rounded-lg p-4 shadow-sm bg-white hover:shadow-lg transition-all duration-200 flex flex-col h-full"
@@ -55,7 +63,11 @@ function ProductCard() {
 
             {isTravelerPage && (
               <div className="mt-3">
+<<<<<<< HEAD
                 <MakeOfferButton />
+=======
+                <MakeOfferButton productRequestID={product.id} />
+>>>>>>> ad24cdb (rebase: from develop)
               </div>
             )}
           </div>
