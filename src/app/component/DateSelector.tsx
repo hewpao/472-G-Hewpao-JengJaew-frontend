@@ -41,6 +41,9 @@ export default function DateSelector({
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const datePickerRef = useRef<any>(null);
 
+  // API hook
+  const createOffer = useCreateOffer();
+
   // Update local state if props change
   useEffect(() => {
     if (initialReturnDate) setReturnDate(initialReturnDate);
@@ -89,8 +92,6 @@ export default function DateSelector({
       document.removeEventListener("click", handleClickOutside, true);
     };
   }, [isCalendarOpen]);
-
-  const createOffer = useCreateOffer();
 
   const createOfferHandler = async (returnDate: Date) => {
     const offerData: CreateOfferRequestDTO = {
