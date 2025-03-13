@@ -36,3 +36,12 @@ export interface GetPaginatedProductRequestRespnoseDTO<T> {
   totalRows: number;
   totalPages: number;
 }
+
+export interface UpdateProductRequestDTO{
+  name: string;
+  desc: string;
+  quantity: number;
+  category: string;
+
+  selected_offer_id: number;
+}
