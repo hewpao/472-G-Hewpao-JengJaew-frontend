@@ -24,43 +24,66 @@ const MakeOfferButton = ({ productRequestID }: MakeOfferButtonProps) => {
     if (showPopup) {
       // Save the current scroll position
       const scrollY = window.scrollY;
-      
+
       // Prevent scrolling
-      document.body.style.position = 'fixed';
+      document.body.style.position = "fixed";
       document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
-      document.body.style.overflow = 'hidden';
+      document.body.style.width = "100%";
+      document.body.style.overflow = "hidden";
 
       // Function to handle events outside the modal
       const blockOutsideInteractions = (event: Event) => {
-        if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        if (
+          modalRef.current &&
+          !modalRef.current.contains(event.target as Node)
+        ) {
           event.stopPropagation();
           event.preventDefault();
         }
       };
 
       // Add event listeners to block interactions outside the modal
-      document.addEventListener('mousedown', blockOutsideInteractions, true);
-      document.addEventListener('touchstart', blockOutsideInteractions, true);
-      document.addEventListener('wheel', blockOutsideInteractions, { passive: false, capture: true });
-      document.addEventListener('touchmove', blockOutsideInteractions, { passive: false, capture: true });
-      document.addEventListener('keydown', blockOutsideInteractions, true);
+      document.addEventListener("mousedown", blockOutsideInteractions, true);
+      document.addEventListener("touchstart", blockOutsideInteractions, true);
+      document.addEventListener("wheel", blockOutsideInteractions, {
+        passive: false,
+        capture: true,
+      });
+      document.addEventListener("touchmove", blockOutsideInteractions, {
+        passive: false,
+        capture: true,
+      });
+      document.addEventListener("keydown", blockOutsideInteractions, true);
 
       return () => {
         // Restore scrolling when component unmounts or popup closes
-        const scrollY = parseInt((document.body.style.top || '0').replace('-', ''));
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        document.body.style.overflow = '';
+        const scrollY = parseInt(
+          (document.body.style.top || "0").replace("-", ""),
+        );
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.width = "";
+        document.body.style.overflow = "";
         window.scrollTo(0, scrollY);
 
         // Remove event listeners
-        document.removeEventListener('mousedown', blockOutsideInteractions, true);
-        document.removeEventListener('touchstart', blockOutsideInteractions, true);
-        document.removeEventListener('wheel', blockOutsideInteractions, true);
-        document.removeEventListener('touchmove', blockOutsideInteractions, true);
-        document.removeEventListener('keydown', blockOutsideInteractions, true);
+        document.removeEventListener(
+          "mousedown",
+          blockOutsideInteractions,
+          true,
+        );
+        document.removeEventListener(
+          "touchstart",
+          blockOutsideInteractions,
+          true,
+        );
+        document.removeEventListener("wheel", blockOutsideInteractions, true);
+        document.removeEventListener(
+          "touchmove",
+          blockOutsideInteractions,
+          true,
+        );
+        document.removeEventListener("keydown", blockOutsideInteractions, true);
       };
     }
   }, [showPopup]);
@@ -83,8 +106,8 @@ const MakeOfferButton = ({ productRequestID }: MakeOfferButtonProps) => {
 
       {/* Popup Modal */}
       {showPopup && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" 
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
           style={{ zIndex: 9998 }}
           onClick={(e) => {
             // Only close if clicking directly on the backdrop, not on the modal content
@@ -93,7 +116,7 @@ const MakeOfferButton = ({ productRequestID }: MakeOfferButtonProps) => {
             }
           }}
         >
-          <div 
+          <div
             ref={modalRef}
             className="bg-white rounded-lg shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto"
             style={{ zIndex: 9999 }}

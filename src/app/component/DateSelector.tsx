@@ -41,9 +41,6 @@ export default function DateSelector({
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const datePickerRef = useRef<any>(null);
 
-  // API hook
-  const createOffer = useCreateOffer();
-
   // Update local state if props change
   useEffect(() => {
     if (initialReturnDate) setReturnDate(initialReturnDate);
@@ -86,12 +83,14 @@ export default function DateSelector({
     };
 
     // Add event listener to capture clicks at the document level
-    document.addEventListener('click', handleClickOutside, true);
+    document.addEventListener("click", handleClickOutside, true);
 
     return () => {
-      document.removeEventListener('click', handleClickOutside, true);
+      document.removeEventListener("click", handleClickOutside, true);
     };
   }, [isCalendarOpen]);
+
+  const createOffer = useCreateOffer();
 
   const createOfferHandler = async (returnDate: Date) => {
     const offerData: CreateOfferRequestDTO = {
@@ -121,7 +120,6 @@ export default function DateSelector({
       if (onClose) {
         onClose();
       }
-
     } catch (error) {
       console.error("Error submitting offer:", error);
       alert(`Failed to create offer: ${error}`);
@@ -179,7 +177,10 @@ export default function DateSelector({
   };
 
   return (
-    <div className={`max-w-lg mx-auto ${className} ${isCalendarOpen ? 'relative z-50' : ''}`} ref={datePickerRef}>
+    <div
+      className={`max-w-lg mx-auto ${className} ${isCalendarOpen ? "relative z-50" : ""}`}
+      ref={datePickerRef}
+    >
       {/* Modal overlay to prevent interaction when calendar is open */}
       {isCalendarOpen && (
         <div
@@ -192,7 +193,11 @@ export default function DateSelector({
         />
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 relative" style={{ zIndex: 50 }}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-6 relative"
+        style={{ zIndex: 50 }}
+      >
         {/* Quick select options */}
         <div className="mb-4">
           <p className="text-sm font-medium mb-2">Quick Select:</p>
@@ -229,9 +234,10 @@ export default function DateSelector({
               dateFormat="MMM d, yyyy"
               className="border p-2 pl-9 w-full rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               placeholderText="Select return date"
-              dayClassName={date => {
+              dayClassName={(date) => {
                 // Highlight current date selection
-                const isSelected = returnDate &&
+                const isSelected =
+                  returnDate &&
                   date.getDate() === returnDate.getDate() &&
                   date.getMonth() === returnDate.getMonth() &&
                   date.getFullYear() === returnDate.getFullYear();
@@ -246,7 +252,9 @@ export default function DateSelector({
                 // Force update of input value when calendar opens
                 if (returnDate) {
                   const formattedDate = formatDate(returnDate);
-                  const inputElement = document.querySelector('.react-datepicker__input-container input') as HTMLInputElement;
+                  const inputElement = document.querySelector(
+                    ".react-datepicker__input-container input",
+                  ) as HTMLInputElement;
                   if (inputElement) {
                     inputElement.value = formattedDate;
                   }
@@ -268,20 +276,27 @@ export default function DateSelector({
               }}
             />
             <CalendarIcon className="absolute left-2 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-
           </div>
           {errors.returnDate && (
-            <p className="text-red-500 text-sm mt-1">{errors.returnDate.message}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.returnDate.message}
+            </p>
           )}
         </div>
 
         {/* Selected date display - always show this section */}
-        <div className={`p-3 rounded-lg flex items-center justify-center ${returnDate ? 'bg-blue-50' : 'bg-gray-50'}`}>
+        <div
+          className={`p-3 rounded-lg flex items-center justify-center ${returnDate ? "bg-blue-50" : "bg-gray-50"}`}
+        >
           <div className="text-sm">
             {returnDate ? (
               <>
-                <p className="font-medium text-center">{formatDate(returnDate)}</p>
-                <p className="text-gray-500 text-xs text-center">Selected Return Date</p>
+                <p className="font-medium text-center">
+                  {formatDate(returnDate)}
+                </p>
+                <p className="text-gray-500 text-xs text-center">
+                  Selected Return Date
+                </p>
               </>
             ) : (
               <p className="text-gray-400 text-center">No date selected yet</p>
@@ -294,20 +309,39 @@ export default function DateSelector({
           <button
             type="submit"
             disabled={isSubmitting || !isValid}
-            className={`px-4 py-3 rounded flex-1 transition-colors ${isValid
+            className={`px-4 py-3 rounded flex-1 transition-colors ${
+              isValid
                 ? "bg-blue-500 text-white hover:bg-blue-600"
                 : "bg-blue-300 text-white cursor-not-allowed"
-              }`}
+            }`}
           >
             {isSubmitting ? (
               <span className="flex items-center justify-center">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Processing...
               </span>
-            ) : "Confirm Date"}
+            ) : (
+              "Confirm Date"
+            )}
           </button>
           {onClose && (
             <button
