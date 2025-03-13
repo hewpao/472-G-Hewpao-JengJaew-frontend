@@ -86,6 +86,25 @@ const getTravelerProductRequests = async () => {
   return data;
 };
 
+const updateProductRequest = async (id: string) => {
+  const session = await getSession();
+  const { data } = await axiosInstance.put<ProductRequestResponse>(
+    `/product-requests/${id}`,
+    {
+      headers: {
+        Authorization: `Bearer ${session?.user?.access_token}`,
+      },
+    },
+  );
+  return data;
+};
+
+const useUpdateProductRequest = () => {
+  return useMutation({
+    mutationFn: updateProductRequest,
+  });
+}
+
 const useGetBuyerProductRequests = () => {
   return useQuery({
     queryKey: ["productRquests"],
@@ -130,4 +149,5 @@ export {
   useGetPaginatedProductRequests,
   useGetBuyerProductRequests,
   useGetTravelerProductRequests,
+  useUpdateProductRequest,
 };

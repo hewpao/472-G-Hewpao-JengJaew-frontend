@@ -8,5 +8,4 @@ export interface Offer {
   user_id: string;
   user?: User;
   offer_date: string;
-    
 }

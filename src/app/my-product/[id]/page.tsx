@@ -1,23 +1,29 @@
 "use client";
 import { useParams } from "next/navigation"; 
-import { products } from "@/mock-data/products";
 import Link from "next/link";
 import { useState } from "react";
 import { GetProductRequestResponseDTO } from "@/dtos/productRequest";
+import { useGetBuyerProductRequests } from "@/api/productRequest/useProductRequest";
 
 
 const ProductDetailPage = () => {
   const router = useParams();
   const { id } = router;
+  const { data: products, isLoading: loading } = useGetBuyerProductRequests();
+  console.log("products", products?.["product-requests"]);
 
-  const product = products.find((product) => String(product.id) === String(id)); // Ensure id is a string
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  const product = products?.["product-requests"].find((product) => String(product.id) === String(id)); // Ensure id is a string
 
   if (!product) {
     return <div className="text-center text-xl font-bold">Product not found</div>;
   }
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editedProduct, setEditedProduct] = useState(product);  // Create a state for edited product details
+  const [editedProduct, setEditedProduct] = useState(product); 
+
 
   const handleEdit = () => {
     setIsEditing(true);  // Toggle the state to edit mode
@@ -35,7 +41,7 @@ const ProductDetailPage = () => {
   };
 
   // Handle changes in the form inputs
-  const handleChange = (e) => {
+  const handleChange = (e: { target: { name: any; value: any; }; }) => {
     const { name, value } = e.target;
     setEditedProduct((prevState) => ({
       ...prevState,
@@ -111,22 +117,6 @@ const ProductDetailPage = () => {
             )}
           </div>
 
-          <div className="mt-2">
-              <p className="text-gray-700 mt-2">Deadline: {product.selected_offer?.offer_date ? new Date(product.selected_offer.offer_date).toLocaleDateString() : "No deadline"}</p>
-          </div>
-
-          {/* Traveler Info */}
-          {product.selected_offer?.user ? (
-            <div className="mt-4 p-4 border rounded-lg bg-gray-50">
-              <h2 className="text-lg font-semibold">Offered by</h2>
-              <p><strong>Name:</strong> {product.selected_offer.user.name}</p>
-              <p><strong>Contact:</strong> {product.selected_offer.user.phone_number}</p>
-            </div>
-          ) : (
-            <p className="text-sm text-gray-500 mt-4">
-              No traveler has offered this request yet.
-            </p>
-          )}
 
           <div className="flex justify-start gap-4 mt-6">
             <button

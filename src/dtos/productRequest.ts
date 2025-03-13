@@ -1,3 +1,5 @@
+import { Offer } from "@/interfaces/Offer";
+
 export interface ProductRequestResponse {
   message: string;
   "product-requests": GetProductRequestResponseDTO[];
@@ -15,9 +17,12 @@ export interface GetProductRequestResponseDTO {
   user_id: string;
   delivery_status: string;
 
-  from: string;
-  to: string;
+  deliver_from: string;
+  deliver_to: string;
   check_service: boolean;
+
+  selected_offer_id: number;
+  offers: Offer[];
 
   create_at: Date;
   updated_at: Date;

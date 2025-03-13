@@ -1,31 +1,21 @@
 "use client";
-import { useGetBuyerProductRequests } from "@/api/productRequest/useProductRequest";
-import { GetProductRequestResponseDTO } from "@/dtos/productRequest";
-import { products } from "@/mock-data/products";
-import { useSession } from "next-auth/react";
+import React, { useState } from "react";
 import Link from "next/link";
-import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { GetProductRequestResponseDTO } from "@/dtos/productRequest";
+import { useGetBuyerProductRequests } from "@/api/productRequest/useProductRequest";
 
-const ProductList: React.FC<{ products: GetProductRequestResponseDTO[] }> = ({ products }) => {
+const ProductList: React.FC<{products: GetProductRequestResponseDTO[];}> = ({ products }) => {
   const session = useSession();
-  console.log("page my product", session.data);
-
-  const { data: prods3, isLoading: loadingProds3 } =
-  useGetBuyerProductRequests();
-
-  if (loadingProds3) {
-    return <div>..Loading</div>;
-  }
-
-  const filteredProducts = products.filter(
-    (product) => product.user_id === session.data?.user?.id
-  );
-
   return (
     <div className="overflow-x-auto p-4">
       <div className="grid grid-cols-2 gap-6">
-        {filteredProducts.map((product) => (
-          <Link key={product.user_id} href={`/my-product/${product.id}`} passHref>
+        {products.map((product) => (
+          <Link
+            key={product.user_id}
+            href={`/my-product/${product.id}`}
+            passHref
+          >
             <div className="border border-gray-200 p-4 rounded-lg shadow-md bg-white cursor-pointer">
               <img
                 src={product.images[0]}
@@ -43,24 +33,30 @@ const ProductList: React.FC<{ products: GetProductRequestResponseDTO[] }> = ({ p
 };
 
 function Page() {
-  const [filterStatus, setFilterStatus] = useState<"Opening" | "Pending">("Opening");
+  const { data: products, isLoading: loading } = useGetBuyerProductRequests();
+  const [filterStatus, setFilterStatus] = useState<"Opening" | "Pending">("Opening"); // Moved to top level
 
-  const filteredProducts = products.filter((product) => {
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  const filteredProducts = products?.["product-requests"]?.filter((product) => {
     return product.delivery_status === filterStatus;
-  });
+  }) ?? [];
+
   return (
     <div className="px-8 bg-gray-50 rounded pt-8 pb-8 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-4xl font-semibold">My Product Request</h1>
-            <Link
-              href="/my-product/create-order"
-              className="text-white bg-black px-6 py-3 rounded-lg font-medium text-s transition duration-200 hover:bg-gray-800 shadow-md"
-            >
-              + Create Order
-            </Link>
+      <div className="flex items-center justify-between mb-6"> {/* ใช้ flexbox */}
+        <h1 className="text-3xl font-bold text-gray-900">
+          My Product Requests
+        </h1>
+        <Link
+          href="/my-product/create-order"
+          className="text-white bg-black px-6 py-3 rounded-lg font-medium text-lg transition duration-200 hover:bg-gray-800 shadow-md"
+        >
+          + Create Order
+        </Link>
       </div>
-
-
       <div className="flex justify-center space-x-4 mb-6">
         <button
           className={`px-4 py-2 rounded-md ${
@@ -79,7 +75,6 @@ function Page() {
           Pending
         </button>
       </div>
-
 
       <ProductList products={filteredProducts} />
     </div>
