@@ -7,6 +7,7 @@ export default function Home() {
   if (session.status === "authenticated") {
     console.log(session.data);
   }
+
   return (
     <div className="min-h-screen flex flex-col font-[family-name:var(--font-geist-sans)]">
       {/* Main Content */}

@@ -1,8 +1,5 @@
 "use client";
-import Image from "next/image";
-import { products } from "@/mock-data/products";
 import React from "react";
-import DateSelector from "../component/DateSelector";
 import ProductCard from "../component/ProductCard";
 function page() {
   return (

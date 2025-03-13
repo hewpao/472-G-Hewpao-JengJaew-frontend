@@ -1,9 +1,6 @@
 "use client";
 
-import Link from "next/link";
 import React from "react";
-import Image from "next/image";
-import { products } from "@/mock-data/products";
 import ProductCard from "../component/ProductCard";
 
 function page() {

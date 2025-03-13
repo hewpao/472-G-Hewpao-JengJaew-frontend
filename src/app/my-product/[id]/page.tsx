@@ -1,14 +1,16 @@
 "use client";
 import { useParams } from "next/navigation"; 
-import { products } from "@/mock-data/products";
+import { productRequests } from "@/mock-data/products";
 import Link from "next/link";
 import { useState } from "react";
+import { GetProductRequestResponseDTO } from "@/dtos/productRequest";
+
 
 const ProductDetailPage = () => {
   const router = useParams();
   const { id } = router;
 
-  const product = products.find((product) => String(product.id) === String(id)); // Ensure id is a string
+  const product = productRequests.find((product) => String(product.id) === String(id)); // Ensure id is a string
 
   if (!product) {
     return <div className="text-center text-xl font-bold">Product not found</div>;
@@ -29,9 +31,7 @@ const ProductDetailPage = () => {
   const handleConfirm = () => {
     setIsEditing(false);
     console.log("Confirmed and Proceeded");
-    // Here, you can also update your products array or make an API call to save the edited product
-    // For example, update the product data in the database or mock data
-    // products.update(editedProduct);
+
   };
 
   // Handle changes in the form inputs
@@ -54,7 +54,7 @@ const ProductDetailPage = () => {
         {/* Left Side - Image */}
         <div className="w-1/2 flex justify-center">
           <img 
-            src={product.image} 
+            src={product.images} 
             alt={product.name} 
             className="w-80 h-80 object-cover rounded-md" 
           />
