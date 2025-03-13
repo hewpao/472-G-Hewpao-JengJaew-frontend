@@ -34,15 +34,11 @@ const ProductList: React.FC<{products: GetProductRequestResponseDTO[];}> = ({ pr
 
 function Page() {
   const { data: products, isLoading: loading } = useGetBuyerProductRequests();
-  const [filterStatus, setFilterStatus] = useState<"Opening" | "Pending">("Opening"); // Moved to top level
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  const filteredProducts = products?.["product-requests"]?.filter((product) => {
-    return product.delivery_status === filterStatus;
-  }) ?? [];
 
   return (
     <div className="px-8 bg-gray-50 rounded pt-8 pb-8 min-h-screen">
@@ -57,26 +53,8 @@ function Page() {
           + Create Order
         </Link>
       </div>
-      <div className="flex justify-center space-x-4 mb-6">
-        <button
-          className={`px-4 py-2 rounded-md ${
-            filterStatus === "Opening" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-          onClick={() => setFilterStatus("Opening")}
-        >
-          Opening
-        </button>
-        <button
-          className={`px-4 py-2 rounded-md ${
-            filterStatus === "Pending" ? "bg-blue-500 text-white" : "bg-gray-200"
-          }`}
-          onClick={() => setFilterStatus("Pending")}
-        >
-          Pending
-        </button>
-      </div>
 
-      <ProductList products={filteredProducts} />
+      <ProductList products={products?.["product-requests"] ?? []} />
     </div>
   );
 }

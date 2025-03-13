@@ -1,133 +1,257 @@
+// pages/edit-product/[id].tsx
 "use client";
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import { useState } from "react";
-import { useSession } from "next-auth/react";
-import { UpdateProductRequestDTO } from "@/dtos/productRequest";
-import { useGetBuyerProductRequests, useUpdateProductRequest } from "@/api/productRequest/useProductRequest";
+import React, { useState } from 'react';
+import { useParams } from 'next/navigation';
+import { useGetProductRequestByID, useUpdateProductRequest } from '@/api/productRequest/useProductRequest';
+import Link from 'next/link';
 
-const ProductDetailPage = () => {
+function Page(){
     const router = useParams();
-    const session = useSession();
     const { id } = router;
-    const { data: products, isLoading: loading } = useGetBuyerProductRequests();
-    const product = products?.["product-requests"].find((product) => String(product.id) === String(id));
+    const { data: product, isLoading: loading } = useGetProductRequestByID(Number(id));
     const [isEditing, setIsEditing] = useState(false);
-    const [editedProduct, setEditedProduct] = useState(product);
+    const [editedName, setEditedName] = useState("");
+    const [editedDesc, setEditedDesc] = useState("");
+    const [editedCategory, setEditedCategory] = useState("");
+    const [editedQuantity, setEditedQuantity] = useState(0);
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    const categories = ["Electronics", "Fashion", "Food", "Books", "Other"];
 
-    if (!product) {
-        return <div className="text-center text-xl font-bold">Product not found</div>;
-    }
+    const mutation = useUpdateProductRequest(Number(id));
+    React.useEffect(() => {
+            if(product?.['product-request']){
+                setEditedName(product?.['product-request']?.name);
+                setEditedDesc(product?.['product-request']?.desc);
+                setEditedCategory(product?.['product-request']?.category);
+                setEditedQuantity(product?.['product-request']?.quantity);
+            }
+    },[product])
 
-    const handleEdit = () => {
+    const handleEditClick = () => {
         setIsEditing(true);
-    };
-
-    const handleCancel = () => {
-        setIsEditing(false);
-        setEditedProduct(product);
-    };
-
-    const mutation = useUpdateProductRequest(Number(id)); // Pass id to the hook
-
-    const handleConfirm = async () => {
-        if (!editedProduct) {
-            return;
-        }
-
-        const updateProductDTO: UpdateProductRequestDTO = {
-            name: editedProduct.name,
-            desc: editedProduct.desc,
-            quantity: editedProduct.quantity,
-            category: editedProduct.category,
-            selected_offer_id: editedProduct.selected_offer_id,
-        };
-
-        mutation.mutate(updateProductDTO); // Pass the productData and accessToken
-
-        setIsEditing(false);
-        console.log("Confirmed and Proceeded");
-    };
-
-    const handleChange = (e: { target: { name: any; value: any; }; }) => {
-        const { name, value } = e.target;
-        setEditedProduct((prevState) => {
-            if (!prevState) return prevState;
-            return {
-                ...prevState,
-                [name]: value,
-            };
+      };
+      
+    const handleSaveClick = () => {
+        mutation.mutate({
+            name: editedName,
+            desc: editedDesc,
+            quantity: editedQuantity,
+            category: editedCategory,
+            selected_offer_id: 0
+        }, {
+        onSuccess: () => {
+            setIsEditing(false);
+        },
         });
     };
 
-    return (
-        <div className="px-8 bg-gray-50 rounded pt-[32px] pb-[32px]">
-            <Link href="/my-product" className="text-blue-500 hover:underline mb-4">
-                ← Back to Product List
+    const handleCancelClick = () => {
+        setIsEditing(false);
+        setEditedName(product?.['product-request']?.name);
+        setEditedDesc(product?.['product-request']?.desc);
+        setEditedCategory(product?.['product-request']?.category);
+        setEditedQuantity(product?.['product-request']?.quantity);
+      };
+
+    return <div className="flex flex-col justify-center md:flex-row gap-6 p-4 font-sans">
+	    <div className="bg-white rounded-lg shadow-md p-6 w-full md:w-1/2">
+            <Link             
+                href={`/my-product`}
+                passHref
+            >
+                Back
             </Link>
-
-            <div className="mt-4 flex items-start gap-4">
-                <div className="w-1/2 flex justify-center">
-                    <img src={product.images[0]} alt={product.name} className="w-80 h-80 object-cover rounded-md" />
-                </div>
-
-                <div className="w-1/2">
-                    <h1 className="text-2xl font-bold">{product.name}</h1>
-
-                    <div className="mt-4">
-                        {isEditing ? (
-                            <input type="text" name="name" value={editedProduct?.name} onChange={handleChange} className="w-full p-2 border rounded-md mt-2" />
-                        ) : (
-                            <p className="text-gray-700 mt-2">{product.name}</p>
-                        )}
-                    </div>
-
-                    <div className="mt-2">
-                        {isEditing ? (
-                            <textarea name="description" value={editedProduct?.desc} onChange={handleChange} className="w-full p-2 border rounded-md mt-2" />
-                        ) : (
-                            <p className="text-gray-700 mt-2">{product.desc}</p>
-                        )}
-                    </div>
-
-                    <div className="mt-2">
-                        <p className="text-gray-700 mt-2">Price: {product.budget ?? "N/A"}</p>
-                    </div>
-
-                    <div className="mt-2">
-                        {isEditing ? (
-                            <input type="text" name="category" value={editedProduct?.category} onChange={handleChange} className="w-full p-2 border rounded-md mt-2" />
-                        ) : (
-                            <p className="text-gray-700 mt-2">Category: {product.category ?? "N/A"}</p>
-                        )}
-                    </div>
-
-                    <div className="flex justify-start gap-4 mt-6">
-                        <button onClick={isEditing ? handleConfirm : handleEdit} className={`p-4 text-white px-6 py-2 rounded-lg ${isEditing ? "bg-green-500" : "bg-blue-500"}`} aria-label={isEditing ? "Confirm and proceed to the next step" : "Edit"}>
-                            {isEditing ? "Confirm" : "Edit"}
-                        </button>
-
-                        {isEditing && (
-                            <button onClick={handleCancel} className="bg-gray-400 text-white px-6 py-2 rounded-lg" aria-label="Go back to the previous step">
-                                Cancel
-                            </button>
-                        )}
-                    </div>
-                    
-                    <div className="mt-2">
-                        Offer List
-                    </div>
-                    
-                </div>
-
-
+	        <h1 className="text-primary-500 font-medium">Product details</h1>
+            <div className="flex items-center mb-4">
+                <h2 className="text-2xl font-bold">{product?.['product-request']?.delivery_status}</h2>
             </div>
-        </div>
-    );
-};
+	        <div>
+            {isEditing ? (
+            <div>
+              <div className="flex mb-6">
+                <div className="mr-4 border border-gray-200 rounded-md overflow-hidden w-24 h-24 flex-shrink-0">
+                  <img
+                    src={product?.['product-request']?.images[0]}
+                    alt={product?.['product-request']?.name}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform"
+                  />
+                </div>
+              </div>
 
-export default ProductDetailPage;
+              <div className="mt-4 bg-gray-50 p-4 rounded-md">
+                <div className="grid grid-cols-[auto,1fr] gap-y-4 gap-x-8">
+                    <div className="text-gray-500">Name</div>
+                    <input
+                        type="text"
+                        value={editedName}
+                        onChange={(e) => setEditedName(e.target.value)}
+                        className="border p-2 w-full"
+                        placeholder="Name"
+                    />
+                  <div className="text-gray-500">Description</div>
+                  <textarea
+                    value={editedDesc}
+                    onChange={(e) => setEditedDesc(e.target.value)}
+                    className="border p-2 w-full"
+                    placeholder="Description"
+                  />
+
+                  <div className="text-gray-500">Category</div>
+                    <select
+                        name="category"
+                        value={editedCategory}
+                        onChange={(e) => setEditedCategory(e.target.value)}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+                        required
+                        >
+                        <option value="">Select a category</option>
+                        {categories.map((category) => (
+                            <option key={category} value={category}>
+                            {category}
+                            </option>
+                        ))}
+                    </select>
+
+                  <div className="text-gray-500">Deliver to</div>
+                  <div className="font-medium">{product?.['product-request']?.deliver_to}</div>
+
+                  <div className="text-gray-500">From</div>
+                  <div className="font-medium">{product?.['product-request']?.deliver_from}</div>
+
+                  <div className="text-gray-500">Quantity</div>
+                  <input
+                    type="number"
+                    value={editedQuantity}
+                    onChange={(e) => setEditedQuantity(Number(e.target.value))}
+                    className="border p-2 w-full"
+                    placeholder="Quantity"
+                  />
+
+                  <div className="text-gray-500">Order number</div>
+                  <div className="font-medium text-right">{product?.['product-request']?.id}</div>
+
+                  <div className="text-gray-500">Budget</div>
+                  <div className="font-medium text-right">{product?.['product-request']?.budget}</div>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <button onClick={handleSaveClick} className="bg-blue-500 text-white p-2 rounded">Save</button>
+                <button onClick={handleCancelClick} className="bg-gray-300 p-2 rounded">Cancel</button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="flex mb-6">
+                <div className="mr-4 border border-gray-200 rounded-md overflow-hidden w-24 h-24 flex-shrink-0">
+                  <img
+                    src={product?.['product-request']?.images[0]}
+                    alt={product?.['product-request']?.name}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-4 bg-gray-50 p-4 rounded-md">
+                <div className="grid grid-cols-[auto,1fr] gap-y-4 gap-x-8">
+                    <div className="text-gray-500">Name</div>
+                    <div className="font-medium">{product?.['product-request']?.name}</div>
+
+                    <div className="text-gray-500">Description</div>
+                    <div className="font-medium">{product?.['product-request']?.desc}</div>
+
+                    <div className="text-gray-500">Category</div>
+                    <div className="font-medium">{product?.['product-request']?.category}</div>
+
+                    <div className="text-gray-500">Deliver to</div>
+                    <div className="font-medium">{product?.['product-request']?.deliver_to}</div>
+
+                    <div className="text-gray-500">From</div>
+                    <div className="font-medium">{product?.['product-request']?.deliver_from}</div>
+
+                    <div className="text-gray-500">Quantity</div>
+                    <div className="font-medium text-right">{product?.['product-request']?.quantity}</div>
+
+                    <div className="text-gray-500">Order number</div>
+                    <div className="font-medium text-right">{product?.['product-request']?.id}</div>
+
+                    <div className="text-gray-500">Budget</div>
+                    <div className="font-medium text-right">{product?.['product-request']?.budget}</div>
+                </div>
+              </div>
+
+	
+                            <div className="mt-8">
+                                {/* <div className="flex justify-between items-center font-bold">
+                                    <div>Estimated total</div>
+                                    <div className="text-right">$12,424.91</div>
+                                </div>
+                                <p className="text-gray-500 text-sm mt-2">
+                                    Final price will be calculated based on your traveler's requested delivery reward.
+                                </p>
+        
+                                <div className="bg-gray-50 rounded-md p-4 mt-4">
+                                    <div className="grid grid-cols-[1fr,auto] gap-y-3 gap-x-4">
+                                        <div className="text-gray-500 flex items-center">
+                                            Product price
+                                        </div>
+                                        <div className="text-right">{product?.['product-request']?.budget}</div>
+        
+                                        <div className="text-gray-500 flex items-center">
+                                            US Sales tax
+                                        </div>
+                                        <div className="text-right">$800.00</div>
+        
+                                        <div className="text-gray-500 flex items-center">
+                                            Traveler reward
+                                        </div>
+                                        <div className="text-right">$630.00</div>
+        
+                                        <div className="text-gray-500 flex items-center">
+                                            Grabr fee
+                                        </div>
+                                        <div className="text-right">$373.66</div>
+        
+                                        <div className="text-gray-500 flex items-center">
+                                            Payment processing
+                                            <div className="ml-1 text-gray-400 cursor-help rounded-full border border-gray-300 w-4 h-4 flex items-center justify-center text-xs hover:bg-gray-100 transition-colors">
+                                                ?
+                                            </div>
+                                        </div>
+                                        <div className="text-right">$621.25</div>
+                                    </div>
+                                </div> */}
+
+                            </div>
+
+                        <div className="grid grid-cols-2 gap-4 mt-4">
+                                <button className="py-3 px-4 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition-colors">
+                                    Cancel order
+                                </button>
+                                <button onClick={handleEditClick} className="py-3 px-4 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition-colors flex items-center justify-center">
+                                    Edit order
+                                    <svg className="w-4 h-4 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                                    </svg>
+                                </button>
+                        </div>
+                        
+                        
+                    </>
+                )}
+	                
+	        </div>
+	
+	        <div className="mt-8">
+	            <h3 className="font-bold uppercase text-sm tracking-wider mb-4">Choose offer</h3>
+	            <div className="border border-gray-200 rounded-lg p-8 flex items-center justify-center text-gray-500">
+	                You have no delivery offers yet.
+	            </div>
+	        </div>
+	    </div>
+	
+
+	</div>
+}
+
+export default Page;
