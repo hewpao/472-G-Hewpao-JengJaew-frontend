@@ -31,8 +31,8 @@ const ProductList: React.FC<{ products: Product[] }> = () => {
                 />
                 <h2 className="text-lg font-semibold mt-2">{product.name}</h2>
                 <p className="text-gray-600 text-sm">{product.desc}</p>
-                <p className="text-gray-600 text-sm">{product.from}</p>
-                <p className="text-gray-600 text-sm">{product.to}</p>
+                <p className="text-gray-600 text-sm">{product.deliver_from}</p>
+                <p className="text-gray-600 text-sm">{product.deliver_to}</p>
                 <p className="text-gray-600 text-sm">{product.budget}</p>
               </div>
             </Link>

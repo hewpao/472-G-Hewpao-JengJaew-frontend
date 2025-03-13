@@ -41,11 +41,11 @@ function ProductCard() {
             <div className="mt-2 text-sm">
               <div className="flex items-center text-gray-600">
                 <span className="font-medium">From:</span>
-                <span className="ml-2">{product.from}</span>
+                <span className="ml-2">{product.deliver_from}</span>
               </div>
               <div className="flex items-center text-gray-600 mt-1 mb-2">
                 <span className="font-medium">To:</span>
-                <span className="ml-2">{product.to}</span>
+                <span className="ml-2">{product.deliver_to}</span>
               </div>
             </div>
             <p className="text-gray-600 mb-2">
