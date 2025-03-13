@@ -1,6 +1,6 @@
 "use client";
 import { useParams } from "next/navigation"; 
-import { productRequests } from "@/mock-data/products";
+import { products } from "@/mock-data/products";
 import Link from "next/link";
 import { useState } from "react";
 import { GetProductRequestResponseDTO } from "@/dtos/productRequest";
@@ -10,7 +10,7 @@ const ProductDetailPage = () => {
   const router = useParams();
   const { id } = router;
 
-  const product = productRequests.find((product) => String(product.id) === String(id)); // Ensure id is a string
+  const product = products.find((product) => String(product.id) === String(id)); // Ensure id is a string
 
   if (!product) {
     return <div className="text-center text-xl font-bold">Product not found</div>;
@@ -54,7 +54,7 @@ const ProductDetailPage = () => {
         {/* Left Side - Image */}
         <div className="w-1/2 flex justify-center">
           <img 
-            src={product.images} 
+            src={product.images[0]} 
             alt={product.name} 
             className="w-80 h-80 object-cover rounded-md" 
           />
