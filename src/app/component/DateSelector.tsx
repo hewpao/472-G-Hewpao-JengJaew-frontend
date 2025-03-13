@@ -178,24 +178,6 @@ export default function DateSelector({
     return day === 0 || day === 6;
   };
 
-  const createOffer = useCreateOffer();
-
-  const createOfferHandler = async (offerDate: string) => {
-    const offerData: CreateOfferRequestDTO = {
-      product_request_id: productRequestID,
-      offer_date: new Date(offerDate),
-    };
-
-    await createOffer.mutateAsync(offerData, {
-      onSuccess: () => {
-        alert("done");
-      },
-      onError: (error) => {
-        alert(`failed ${error}`);
-      },
-    });
-  };
-
   return (
     <div className={`max-w-lg mx-auto ${className} ${isCalendarOpen ? 'relative z-50' : ''}`} ref={datePickerRef}>
       {/* Modal overlay to prevent interaction when calendar is open */}
