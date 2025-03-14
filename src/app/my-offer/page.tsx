@@ -5,52 +5,33 @@ import { useSession } from "next-auth/react";
 import { useGetBuyerProductRequests, useGetTravelerProductRequests, useUpdateProductRequestStatus } from "@/api/productRequest/useProductRequest";
 import MyOfferCard from "./component/MyOfferCard";
 import { ResponseOffer } from "@/dtos/Offer";
-
-enum Status {
-  Pending = "Pending",
-  Purchased = "Purchased",
-  PickedUp = "PickedUp",
-  OutForDelivery = "OutForDelivery",
-  Delivered = "Delivered",
-}
+import { DeliveryStatus } from "@/interfaces/ProductRequest";
 
 
 function Page() {
   const session = useSession();
   const [selectedStatus, setSelectedStatus] = useState<string>("Pending");
-  console.log("session", session.data?.user?.is_verified)
 
   const { data: products, isLoading: loading } = useGetTravelerProductRequests();
-  console.log("product",products)
-
-  const statusCounts = useMemo(() => {
-    const counts = {
-      [Status.Pending]: 0,
-      [Status.Purchased]: 0,
-      [Status.PickedUp]: 0,
-      [Status.OutForDelivery]: 0,
-      [Status.Delivered]: 0,
-    };
-
-  // products!["product-requests"]?.forEach((p:GetProductRequestResponseDTO) => {
-  //   // const offer = p.offers as ResponseOffer[];
-  //     if (p.selected_offer_id) {
-  //       if (p.delivery_status === "Pending"){
-  //         counts[Status.Pending] += 1;
-  //       }else if (p.delivery_status === "Purchased"){
-  //         counts[Status.Purchased] += 1;
-  //       }else if (p.delivery_status === "PickedUp"){
-  //         counts[Status.PickedUp] += 1;
-  //       }else if (p.delivery_status === "OutForDelivery"){
-  //         counts[Status.OutForDelivery] += 1;
-  //       }
-  //       else if(p.delivery_status === "Delivered"){
-  //         counts[Status.Delivered] += 1;
-  //       }
-  //     }
-  //   });
-    return counts;
-  }, [products]);
+  const productList = products?.["product-requests"] as GetProductRequestResponseDTO[]
+  
+  const counts = {
+    "Pending": 0,
+    "Purchased": 0,
+    "PickedUp": 0,
+    "OutForDelivery": 0,
+    "Delivered": 0
+  };
+  
+  if (productList && Array.isArray(productList)) {
+    productList.forEach(product => {
+      if (product.delivery_status in counts) {
+        counts[product.delivery_status as keyof typeof counts]++;
+      }
+    });
+  }
+  console.log("productList: ", productList)
+  console.log("Status counts:", counts);
   
   const filteredProducts = useMemo(() => 
     products?.["product-requests"]?.filter((product: GetProductRequestResponseDTO) => 
@@ -70,31 +51,31 @@ function Page() {
             className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "Pending" ? "bg-gray-200" : ""}`}
             onClick={() => setSelectedStatus("Pending")}
           >
-            {statusCounts[Status.Pending]} {"Pending"}
+            {counts[DeliveryStatus.Pending]} {"Pending"}
         </button>
         <button
             className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "Purchased" ? "bg-gray-200" : ""}`}
             onClick={() => setSelectedStatus("Purchased")}
           >
-            {statusCounts[Status.Purchased]} {"Purchased"}
+            {counts[DeliveryStatus.Purchased]} {"Purchased"}
         </button>
         <button
             className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "PickedUp" ? "bg-gray-200" : ""}`}
             onClick={() => setSelectedStatus("PickedUp")}
           >
-            {statusCounts[Status.PickedUp]} {"PickedUp"}
+            {counts[DeliveryStatus.PickedUp]} {"PickedUp"}
         </button>
         <button
             className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "OutForDelivery" ? "bg-gray-200" : ""}`}
             onClick={() => setSelectedStatus("OutForDelivery")}
           >
-            {statusCounts[Status.OutForDelivery]} {"Out For Delivery"}
+            {counts[DeliveryStatus.OutForDelivery]} {"Out For Delivery"}
         </button>
         <button
             className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "Delivered" ? "bg-gray-200" : ""}`}
             onClick={() => setSelectedStatus("Delivered")}
           >
-            {statusCounts[Status.Delivered]} {"Delivered"}
+            {counts[DeliveryStatus.Delivered]} {"Delivered"}
         </button>
 
       </div>
