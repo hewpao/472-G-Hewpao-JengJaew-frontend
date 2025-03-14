@@ -32,26 +32,25 @@ function Page() {
       [Status.Delivered]: 0,
     };
 
-  products!["product-requests"]?.forEach((p:GetProductRequestResponseDTO) => {
-    // const offer = p.offers as ResponseOffer[];
-      if (p.selected_offer_id) {
-        if (p.delivery_status === "Pending"){
-          counts[Status.Pending] += 1;
-        }else if (p.delivery_status === "Purchased"){
-          counts[Status.Purchased] += 1;
-        }else if (p.delivery_status === "PickedUp"){
-          counts[Status.PickedUp] += 1;
-        }else if (p.delivery_status === "OutForDelivery"){
-          counts[Status.OutForDelivery] += 1;
-        }
-        else if(p.delivery_status === "Delivered"){
-          counts[Status.Delivered] += 1;
-        }
-      }
-    });
+  // products!["product-requests"]?.forEach((p:GetProductRequestResponseDTO) => {
+  //   // const offer = p.offers as ResponseOffer[];
+  //     if (p.selected_offer_id) {
+  //       if (p.delivery_status === "Pending"){
+  //         counts[Status.Pending] += 1;
+  //       }else if (p.delivery_status === "Purchased"){
+  //         counts[Status.Purchased] += 1;
+  //       }else if (p.delivery_status === "PickedUp"){
+  //         counts[Status.PickedUp] += 1;
+  //       }else if (p.delivery_status === "OutForDelivery"){
+  //         counts[Status.OutForDelivery] += 1;
+  //       }
+  //       else if(p.delivery_status === "Delivered"){
+  //         counts[Status.Delivered] += 1;
+  //       }
+  //     }
+  //   });
     return counts;
   }, [products]);
-  console.log("test status",selectedStatus)
   
   const filteredProducts = useMemo(() => 
     products?.["product-requests"]?.filter((product: GetProductRequestResponseDTO) => 
@@ -89,7 +88,7 @@ function Page() {
             className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "OutForDelivery" ? "bg-gray-200" : ""}`}
             onClick={() => setSelectedStatus("OutForDelivery")}
           >
-            {statusCounts[Status.OutForDelivery]} {"OutForDelivery"}
+            {statusCounts[Status.OutForDelivery]} {"Out For Delivery"}
         </button>
         <button
             className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "Delivered" ? "bg-gray-200" : ""}`}

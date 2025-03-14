@@ -3,10 +3,6 @@ import {
   useGetProductRequestByID,
   useUpdateProductRequest,
 } from "@/api/productRequest/useProductRequest";
-<<<<<<< HEAD
-import { GetProductRequestResponseDTO, ProductRequestResponse } from "@/dtos/productRequest";
-=======
->>>>>>> 4d68430e5fa3c449afeea299ab2fb708e5425359
 
 interface OfferDetailsProps {
   id: number;
@@ -20,7 +16,6 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ id }) => {
   const useUpdateProduct = useUpdateProductRequest(
     traveler.data?.product_request_id ?? 0,
   );
-  const productRequest = product as GetProductRequestResponseDTO;
 
   if (loading) {
     return <div> Loading... </div>;
@@ -28,17 +23,10 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ id }) => {
   const handleSelectOffer = () => {
     useUpdateProduct.mutate(
       {
-<<<<<<< HEAD
-        name: productRequest.name,
-        desc: productRequest.desc,
-        quantity: productRequest.quantity,
-        category: productRequest.category,
-=======
         name: product!["product-request"].name,
         desc: product!["product-request"].desc,
         quantity: product!["product-request"].quantity,
         category: product!["product-request"].category,
->>>>>>> 4d68430e5fa3c449afeea299ab2fb708e5425359
         selected_offer_id: id,
       },
       {
