@@ -2,42 +2,39 @@
 import { useState, useCallback } from "react";
 import ProgressIndicator from "../../component/ProgressIndicator";
 import ImageUpload from "../../component/ImageUpload";
-import { useCreateProductRequest } from "@/api/productRequest/useProductRequest";
-import { useRouter } from "next/navigation";
 
 interface OrderRequest {
-  name: string;
-  desc: string;
+  title: string;
+  description: string;
   images: File[];
   budget: number;
-  quantity: number;
   category: string;
-  check_service: boolean;
-  from: string;
-  to: string;
+  quantity: number;
+  verifyProductService: boolean;
+  deliveryFrom: string;
+  deliveryTo: string;
+  deliveryTime: string;
 }
 
 function CreateOrderPage() {
   const [step, setStep] = useState(1);
-  const customSteps = ["Product details", "Delivery details", "Summary"];
+  const customSteps = ['Product details', 'Delivery details', 'Summary'];
 
-  const createProductRequest = useCreateProductRequest();
 
   const [orderData, setOrderData] = useState<OrderRequest>({
-    name: "",
-    desc: "",
+    title: "",
+    description: "",
     images: [],
     budget: 0,
     category: "",
     quantity: 1,
-    check_service: false,
-    from: "",
-    to: "",
+    verifyProductService: false,
+    deliveryFrom: "",
+    deliveryTo: "",
+    deliveryTime: "Up to 1 month",
   });
 
-  const router = useRouter();
-
-  const categories = ["Electronics", "Fashion", "Food", "Books", "Other"];
+  const categories = ["Sneaker", "Hat", "Shirt", "Suit", "Pant", "Other"];
 
   const handleNext = () => {
     if (step < customSteps.length) setStep(step + 1);
@@ -47,20 +44,10 @@ function CreateOrderPage() {
     if (step > 1) setStep(step - 1);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     // Add API call to submit order here
     console.log("Submitting order:", orderData);
-
-    await createProductRequest.mutateAsync(orderData, {
-      onSuccess: () => {
-        alert("Order submitted successfully!");
-      },
-      onError: (error) => {
-        alert(error.message);
-      },
-    });
-    // TODO: Change this to redirect to list of my product request page or something
-    router.push("/");
   };
 
   const handleChange = (
@@ -68,10 +55,7 @@ function CreateOrderPage() {
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) => {
-    const { name, type } = e.target;
-    const value = e.target.value;
-    const checked =
-      type === "checkbox" ? (e.target as HTMLInputElement).checked : false;
+    const { name, type, value, checked } = e.target;
     setOrderData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -104,7 +88,7 @@ function CreateOrderPage() {
           </h1>
         </div>
 
-        <form className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {/* ✅ Step 1: Product Details */}
           {step === 1 && (
             <>
@@ -114,8 +98,8 @@ function CreateOrderPage() {
                 </label>
                 <input
                   type="text"
-                  name="name"
-                  value={orderData.name}
+                  name="title"
+                  value={orderData.title}
                   onChange={handleChange}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
                   required
@@ -147,9 +131,8 @@ function CreateOrderPage() {
                   Product details
                 </label>
                 <textarea
-                  id="desc"
-                  name="desc"
-                  value={orderData.desc}
+                  name="description"
+                  value={orderData.description}
                   onChange={handleChange}
                   rows={4}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
@@ -225,9 +208,9 @@ function CreateOrderPage() {
               <div className="flex items-center">
                 <input
                   type="checkbox"
-                  id="check_service"
-                  name="check_service"
-                  checked={orderData.check_service}
+                  id="verifyProductService"
+                  name="verifyProductService"
+                  checked={orderData.verifyProductService}
                   onChange={handleChange}
                   className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                 />
@@ -251,8 +234,8 @@ function CreateOrderPage() {
                 </label>
                 <input
                   type="text"
-                  name="from"
-                  value={orderData.from}
+                  name="deliveryFrom"
+                  value={orderData.deliveryFrom}
                   onChange={handleChange}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
                   required
@@ -265,12 +248,31 @@ function CreateOrderPage() {
                 </label>
                 <input
                   type="text"
-                  name="to"
-                  value={orderData.to}
+                  name="deliveryTo"
+                  value={orderData.deliveryTo}
                   onChange={handleChange}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
                   required
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Delivery time
+                </label>
+                <select
+                  name="deliveryTime"
+                  value={orderData.deliveryTime}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-blue-500"
+                  required
+                >
+                  <option value="">Select a delivery time</option>
+                  <option value="Up to 1 week">Up to 1 week</option>
+                  <option value="Up to 2 weeks">Up to 2 weeks</option>
+                  <option value="Up to 1 month">Up to 1 month</option>
+                  <option value="More than 1 month">More than 1 month</option>
+                </select>
               </div>
             </>
           )}
@@ -301,45 +303,49 @@ function CreateOrderPage() {
                 </div>
               </div>
               <p>
-                <strong>Product:</strong> {orderData.name} <br />
+                <strong>Product:</strong> {orderData.title} <br />
                 <strong>Category:</strong> {orderData.category} <br />
-                <strong>Description:</strong> {orderData.desc} <br />
+                <strong>Description:</strong> {orderData.description} <br />
                 <strong>Budget:</strong> {orderData.budget} THB <br />
                 <strong>Quantity:</strong> {orderData.quantity} <br />
                 <strong>Verify Product Service:</strong>{" "}
-                {orderData.check_service ? "Yes" : "No"} <br />
-                <strong>Deliver from:</strong> {orderData.from} <br />
-                <strong>Deliver to:</strong> {orderData.to} <br />
+                {orderData.verifyProductService ? "Yes" : "No"} <br />
+                <strong>Delivery Time:</strong> {orderData.deliveryTime} <br />
+                <strong>Deliver from:</strong> {orderData.deliveryFrom} <br />
+                <strong>Deliver to:</strong> {orderData.deliveryTo} <br />
               </p>
             </>
           )}
+
+          {/* 🔘 Navigation Buttons */}
+          <div className="flex justify-between mt-4">
+            {step > 1 && (
+              <button
+                type="button"
+                onClick={handlePrevious}
+                className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400"
+              >
+                Previous
+              </button>
+            )}
+            {step < 3 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                type="submit"
+                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
+              >
+                Submit Order
+              </button>
+            )}
+          </div>
         </form>
-        {/* 🔘 Navigation Buttons */}
-        <div className="flex justify-between mt-4">
-          {step > 1 && (
-            <button
-              onClick={handlePrevious}
-              className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400"
-            >
-              Previous
-            </button>
-          )}
-          {step < 3 ? (
-            <button
-              onClick={handleNext}
-              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-            >
-              Next
-            </button>
-          ) : (
-            <button
-              onClick={handleSubmit}
-              className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
-            >
-              Submit Order
-            </button>
-          )}
-        </div>
       </div>
     </div>
   );
