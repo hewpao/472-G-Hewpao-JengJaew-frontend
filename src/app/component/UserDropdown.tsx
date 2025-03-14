@@ -54,21 +54,26 @@ const UserDropdown = ({ email }: UserDropdownProps) => {
             <p className="text-sm font-medium text-gray-900">Signed in as</p>
             <p className="text-xs text-gray-600 truncate">{email}</p>
           </div>
-          
+
           <Link href="/my-product">
             <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
               My Products
             </div>
           </Link>
-          
+
           <Link href="/my-offer">
             <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
               My Offers
             </div>
           </Link>
-          
+
+          <Link href="/verification">
+            <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              Become a Traveler
+            </div>
+          </Link>
           <div className="border-t border-gray-200 mt-1"></div>
-          
+
           <button
             onClick={() => signOut()}
             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"

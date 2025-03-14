@@ -4,6 +4,7 @@ export interface RegisterUserRequestDTO {
   name: string;
   middle_name?: string | null;
   surname: string;
+  phone_number?: string | null;
 }
 
 export interface LoginWithCredentialsRequestDTO {

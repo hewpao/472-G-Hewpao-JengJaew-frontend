@@ -2,7 +2,7 @@ import { ResponseOffer } from "./Offer";
 
 export interface ProductRequestResponse {
   message: string;
-  "product-request": GetProductRequestResponseDTO[];
+  "product-requests": GetProductRequestResponseDTO[];
 }
 
 export interface GetProductRequestResponseDTO {
@@ -37,7 +37,7 @@ export interface GetPaginatedProductRequestRespnoseDTO<T> {
   totalPages: number;
 }
 
-export interface UpdateProductRequestDTO{
+export interface UpdateProductRequestDTO {
   name: string;
   desc: string;
   quantity: number;

@@ -1,56 +1,48 @@
 "use client";
 import { useState } from "react";
-import ImageUpload from "../component/ImageUpload";
-import router from "next/navigation";
 import ProgressIndicator from "../component/ProgressIndicator";
-
-interface IdentityVerification {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  dob: string;
-  address: string;
-  idDocuments: File[];
-  agreeToTerms: boolean;
-}
-
-const isFormValid = (formData: {
-  firstName: string;
-  lastName: string;
-  dob: string;
-  address: string;
-  phone: string;
-  email: string;
-  agreeToTerms: any;
-}) => {
-  return (
-    formData.firstName.trim() !== "" &&
-    formData.lastName.trim() !== "" &&
-    formData.dob.trim() !== "" &&
-    formData.address.trim() !== "" &&
-    formData.phone.trim() !== "" &&
-    formData.email.trim() !== "" &&
-    formData.agreeToTerms
-  );
-};
+import ConfirmInfo from "./components/ConfirmInfo";
+import PayoutAccountForm from "./components/PayoutAccountForm";
+import UploadDocuments from "./components/UploadDocuments";
+import { IdentityVerification } from "@/interfaces/IdentityVerification";
+import {
+  useVerifyWithKYC,
+  useUpdateUserVerification,
+  useGetVerificationStatus,
+} from "@/api/verification/useVerification";
+import { useSession } from "next-auth/react";
+import { useAddTravelerPayoutAccount } from "@/api/verification/usePayoutAccount";
+import { useRouter } from "next/navigation";
 
 function Page() {
+  const session = useSession();
+  const { data: verified } = useUpdateUserVerification(
+    session.data?.user?.email || "",
+  );
+
+  const addTravelerPayoutAccount = useAddTravelerPayoutAccount();
+  const verifyWithKYC = useVerifyWithKYC();
+  const router = useRouter();
+
   const [step, setStep] = useState(1);
-  const verificationSteps = ['Verification Started', 'Identity Checked', 'Verifying', 'Verification Complete'];
+  // const verificationSteps = ['Verification Started', 'Identity Checked', 'Verifying'];
+  const verificationSteps = [
+    "Upload Document",
+    "Add Payout Account",
+    "Verifying",
+  ];
+
   const [formData, setFormData] = useState<IdentityVerification>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    dob: "",
-    address: "",
+    account_number: "",
+    account_name: "",
+    bank_swift: "",
     idDocuments: [],
-    agreeToTerms: false,
   });
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, type, value, checked } = e.target;
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, type, value, checked } = e.target as HTMLInputElement;
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -61,219 +53,103 @@ function Page() {
     setFormData((prev) => ({ ...prev, idDocuments: newImages }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Submitting identity verification:", formData);
-    if (step === 1 && !isFormValid(formData)) {
-      alert("Please complete all required fields before proceeding.");
-      return;
-    }
-    setStep((prev) => prev + 1);
+  const handleBackStep = () => {
+    if (step > 1) setStep((prev) => prev - 1);
   };
 
   const handleNextStep = () => {
-    if (step === 2 && !isFormValid(formData)) {
-      alert("Please complete all required fields before proceeding.");
-      return;
+    if (step < 3) setStep((prev) => prev + 1);
+    else {
+      handleConfirm(); // เมื่อถึงขั้นสุดท้ายให้เรียกฟังก์ชันยืนยัน
+      setStep((prev) => prev + 1); // ไปหน้าอื่น
     }
-    setStep((prev) => prev + 1);
   };
 
-  const handleBackStep = () => {
-    setStep((prev) => Math.max(1, prev - 1));
+  const handleConfirm = async () => {
+    // ส่งข้อมูลไปยัง API
+    // useUpdateUserVerification(session.data?.user?.email || "");
+
+    await verifyWithKYC.mutateAsync(
+      {
+        "card-image": formData.idDocuments[0],
+        provider: "iapp",
+      },
+      {
+        onSuccess: () => {
+          alert("Your identity is being verified!");
+        },
+        onError: () => {
+          alert("Error verifying your identity!");
+          return;
+        },
+      },
+    );
+
+    await addTravelerPayoutAccount.mutateAsync(
+      {
+        account_number: formData.account_number,
+        account_name: formData.account_name,
+        bank_swift: formData.bank_swift,
+      },
+      {
+        onSuccess: () => {
+          alert("PayoutAccount added successfully!");
+        },
+        onError: (error) => {
+          alert(error);
+        },
+      },
+    );
+    if (verified?.isVerified) {
+      alert("You have already verified!");
+      return;
+    }
+    alert("Verification Complete! 🎉");
+    router.push("/");
   };
 
   return (
     <div className="min-h-screen p-6 flex justify-center items-start">
-      <div className="max-w-4xl w-full bg-[#FFFFFF] rounded-lg p-[16px] block">
+      <div className="max-w-4xl w-full bg-white rounded-lg p-4">
         <ProgressIndicator step={step} steps={verificationSteps} />
-        
+
         {step === 1 && (
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Step 1: Personal Information */}
-          <div className="border-b pb-4">
-            <h2 className="text-lg font-semibold text-gray-800">Personal Information</h2>
-
-            {/* First Name */}
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700">First Name</label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 px-3 py-2 rounded-md"
-                required
-              />
-            </div>
-
-            {/* Last Name */}
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700">Last Name</label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 px-3 py-2 rounded-md"
-                required
-              />
-            </div>
-
-            {/* Email */}
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-                className="mt-1 block w-full border border-gray-300 px-3 py-2 rounded-md"
-                required
-              />
-            </div>
-
-            {/* Phone */}
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700">
-                Phone number
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                pattern="[0-9]*"
-                inputMode="numeric"
-                className="mt-1 block w-full border border-gray-300 px-3 py-2 rounded-md"
-                required
-              />
-            </div>
-
-            {/* Date of Birth */}
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700">Date of Birth</label>
-              <input
-                type="date"
-                name="dob"
-                value={formData.dob}
-                onChange={handleChange}
-                className="mt-1 block w-full border border-gray-300 px-3 py-2 rounded-md"
-                required
-              />
-            </div>
-
-            {/* Address */}
-            <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700">Address</label>
-              <textarea
-                name="address"
-                value={formData.address}
-                onChange={handleChange}
-                rows={3}
-                className="mt-1 block w-full border border-gray-300 px-3 py-2 rounded-md"
-                required
-              />
-            </div>
-          </div>
-
-          {/* Step 2: Upload Documents */}
-          <div className="border-b pb-4">
-            <h2 className="text-lg font-semibold text-gray-800">Upload Documents</h2>
-            <ImageUpload
-              maxImages={2}
-              images={formData.idDocuments}
-              onImagesChange={handleImagesChange}
-            />
-            <p className="text-sm text-gray-600">Please upload a photo of your ID card or passport.</p>
-          </div>
-
-          {/* Step 3: Confirm */}
-          <div>
-            <h2 className="text-lg font-semibold text-gray-800"></h2>
-            <div className="mt-4 flex items-center">
-              <input
-                type="checkbox"
-                id="agreeToTerms"
-                name="agreeToTerms"
-                checked={formData.agreeToTerms}
-                onChange={handleChange}
-                className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                required
-              />
-              <label htmlFor="agreeToTerms" className="ml-2 text-sm text-gray-700">
-                I confirm that the information provided is accurate.
-              </label>
-            </div>
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex justify-center mt-4">
-              <button className="bg-green-500 text-white px-4 py-2 rounded-lg flex items-center">
-                Submit
-              </button>
-          </div>
-        </form>
-        )}
-
-        {step === 2 && (
-          <SetStepPage 
-            formData={formData} 
-            handleBackStep={handleBackStep} 
-            handleNextStep={handleNextStep} 
+          <UploadDocuments
+            formData={formData}
+            handleImagesChange={handleImagesChange}
           />
         )}
-
+        {step === 2 && (
+          <PayoutAccountForm formData={formData} handleChange={handleChange} />
+        )}
         {step === 3 && (
-          <p className="text-lg text-gray-600">Verification is in progress, please wait...</p>
+          <ConfirmInfo
+            formData={formData}
+            handleBackStep={handleBackStep}
+            handleNextStep={handleNextStep}
+          />
         )}
+        {step < 4 && (
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={handleBackStep}
+              className={`px-4 py-2 rounded-lg ${step === 1 ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-gray-400 text-white"}`}
+              disabled={step === 1}
+            >
+              Back
+            </button>
 
-        {step === 4 && (
-          <p className="text-lg text-gray-600">Verification completed successfully!</p>
+            <button
+              onClick={handleNextStep}
+              className="bg-green-500 text-white px-4 py-2 rounded-lg"
+            >
+              {step === 3 ? "Confirm" : "Next"}
+            </button>
+          </div>
         )}
-        
       </div>
     </div>
   );
 }
 
 export default Page;
-
-interface StepPageProps {
-  formData: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    dob: string;
-    address: string;
-    idDocuments: File[];
-  };
-  handleBackStep: () => void;
-  handleNextStep: () => void;
-}
-
-const SetStepPage: React.FC<StepPageProps> = ({ formData, handleBackStep, handleNextStep }) => {
-  return (
-    <div>
-      <h2 className="text-lg font-semibold text-gray-800">Confirm Your Information</h2>
-      <p><strong>First Name:</strong> {formData.firstName}</p>
-      <p><strong>Last Name:</strong> {formData.lastName}</p>
-      <p><strong>Email:</strong> {formData.email}</p>
-      <p><strong>Phone:</strong> {formData.phone}</p>
-      <p><strong>Date of Birth:</strong> {formData.dob}</p>
-      <p><strong>Address:</strong> {formData.address}</p>
-      <p><strong>Uploaded Documents:</strong> {formData.idDocuments.length} file(s)</p>
-
-      <div className="flex justify-between mt-4">
-        <button onClick={handleBackStep} className="bg-gray-400 text-white px-4 py-2 rounded-lg">
-          Back
-        </button>
-        <button onClick={handleNextStep} className="bg-green-500 text-white px-4 py-2 rounded-lg">
-          Confirm & Proceed
-        </button>
-      </div>
-    </div>
-  );
-};
