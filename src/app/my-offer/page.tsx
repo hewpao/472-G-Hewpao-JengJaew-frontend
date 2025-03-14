@@ -1,37 +1,47 @@
 "use client";
 import React, { useMemo, useState } from "react";
-import { GetProductRequestResponseDTO, UpdateProductRequestStatusDTO } from "@/dtos/productRequest";
+import { GetProductRequestResponseDTO } from "@/dtos/productRequest";
 import { useSession } from "next-auth/react";
-import { useGetBuyerProductRequests, useGetTravelerProductRequests, useUpdateProductRequestStatus } from "@/api/productRequest/useProductRequest";
+import { useGetTravelerProductRequests } from "@/api/productRequest/useProductRequest";
 import MyOfferCard from "./component/MyOfferCard";
-import { ResponseOffer } from "@/dtos/Offer";
 import { DeliveryStatus } from "@/interfaces/ProductRequest";
 
 
 function Page() {
   const session = useSession();
-  const [selectedStatus, setSelectedStatus] = useState<string>("Pending");
+  const [selectedStatus, setSelectedStatus] = useState<string>(DeliveryStatus.Pending);
 
   const { data: products, isLoading: loading, refetch: refetchdata } = useGetTravelerProductRequests();
   const productList = products?.["product-requests"] as GetProductRequestResponseDTO[]
   
   const counts = {
-    "Pending": 0,
-    "Purchased": 0,
-    "PickedUp": 0,
-    "OutForDelivery": 0,
-    "Delivered": 0
+    [DeliveryStatus.Pending]: 0,
+    [DeliveryStatus.Purchased]: 0,
+    [DeliveryStatus.PickedUp]: 0,
+    [DeliveryStatus.OutForDelivery]: 0,
+    [DeliveryStatus.Delivered]: 0
   };
   
   if (productList && Array.isArray(productList)) {
     productList.forEach(product => {
-      if (product.delivery_status in counts) {
-        counts[product.delivery_status as keyof typeof counts]++;
-      }
+    if (product.delivery_status === DeliveryStatus.Pending){
+      counts[DeliveryStatus.Pending]++;
+    }
+    else if (product.delivery_status === DeliveryStatus.Purchased){
+      counts[DeliveryStatus.Purchased]++;
+    }
+    else if (product.delivery_status === DeliveryStatus.PickedUp){
+      counts[DeliveryStatus.PickedUp]++;
+    }
+    else if (product.delivery_status === DeliveryStatus.OutForDelivery){
+      counts[DeliveryStatus.OutForDelivery]++;
+    }
+    else if (product.delivery_status === DeliveryStatus.Delivered){
+      counts[DeliveryStatus.Delivered]++;
+    }
+
     });
   }
-  console.log("productList: ", productList)
-  console.log("Status counts:", counts);
   
   const filteredProducts = useMemo(() => 
     products?.["product-requests"]?.filter((product: GetProductRequestResponseDTO) => 
@@ -48,32 +58,32 @@ function Page() {
       <h1 className="text-3xl font-bold text-gray-900 mb-6">My Offers</h1>
       <div className="mb-4 flex">
         <button
-            className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "Pending" ? "bg-gray-200" : ""}`}
-            onClick={() => setSelectedStatus("Pending")}
+            className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === DeliveryStatus.Pending ? "bg-gray-200" : ""}`}
+            onClick={() => setSelectedStatus(DeliveryStatus.Pending)}
           >
             {counts[DeliveryStatus.Pending]} {"Pending"}
         </button>
         <button
-            className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "Purchased" ? "bg-gray-200" : ""}`}
-            onClick={() => setSelectedStatus("Purchased")}
+            className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === DeliveryStatus.Purchased ? "bg-gray-200" : ""}`}
+            onClick={() => setSelectedStatus(DeliveryStatus.Purchased)}
           >
             {counts[DeliveryStatus.Purchased]} {"Purchased"}
         </button>
         <button
-            className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "PickedUp" ? "bg-gray-200" : ""}`}
-            onClick={() => setSelectedStatus("PickedUp")}
+            className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === DeliveryStatus.PickedUp ? "bg-gray-200" : ""}`}
+            onClick={() => setSelectedStatus(DeliveryStatus.PickedUp)}
           >
             {counts[DeliveryStatus.PickedUp]} {"Picked Up"}
         </button>
         <button
-            className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "OutForDelivery" ? "bg-gray-200" : ""}`}
-            onClick={() => setSelectedStatus("OutForDelivery")}
+            className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === DeliveryStatus.OutForDelivery ? "bg-gray-200" : ""}`}
+            onClick={() => setSelectedStatus(DeliveryStatus.OutForDelivery)}
           >
             {counts[DeliveryStatus.OutForDelivery]} {"Out For Delivery"}
         </button>
         <button
-            className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "Delivered" ? "bg-gray-200" : ""}`}
-            onClick={() => setSelectedStatus("Delivered")}
+            className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === DeliveryStatus.Delivered ? "bg-gray-200" : ""}`}
+            onClick={() => setSelectedStatus(DeliveryStatus.Delivered)}
           >
             {counts[DeliveryStatus.Delivered]} {"Delivered"}
         </button>
