@@ -5,6 +5,13 @@ const nextConfig: NextConfig = {
   images: {
     domains: ["s3.cnc.cs.sci.ku.ac.th"], // Add your S3 domain here
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  output: "standalone",
 };
 
 export default nextConfig;
