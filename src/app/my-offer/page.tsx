@@ -39,7 +39,7 @@ function Page() {
 
   return (
     <div className="px-8 bg-gray-50 rounded pt-[32px] pb-[32px]">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6">Your Trip</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-6">My Offers</h1>
       <div className="mb-4 flex">
         {Object.keys(statusCounts).map((status) => (
           <button
