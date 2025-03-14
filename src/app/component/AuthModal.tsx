@@ -1,6 +1,8 @@
 "use client";
 import { signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface AuthModalProps {
   isModalOpen: boolean;
@@ -13,91 +15,86 @@ interface FormErrors {
 }
 
 const AuthModal = ({ isModalOpen, setIsModalOpen }: AuthModalProps) => {
+  const router = useRouter();
   const [showEmailForm, setShowEmailForm] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
+
+  // Form fields
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState({
     email: false,
     password: false,
-    confirmPassword: false
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   // Validate form when inputs change
   useEffect(() => {
     validateForm();
-  }, [email, password, confirmPassword, isSignUp]);
+    // Clear login error when user changes inputs
+    if (loginError) setLoginError(null);
+  }, [email, password]);
 
   const validateForm = () => {
     const newErrors: FormErrors = {};
-    
+
     // Email validation
     if (!email) {
       newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       newErrors.email = "Email address is invalid";
     }
-    
+
     // Password validation
     if (!password) {
       newErrors.password = "Password is required";
     } else if (password.length < 6) {
       newErrors.password = "Password must be at least 6 characters";
     }
-    
-    // Confirm password validation (only for signup)
-    if (isSignUp && password !== confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleFacebookSignIn = async () => {
-    try {
-      const res = await signIn("facebook");
-      console.log(res);
-    } catch (error) {
-      console.error("Facebook sign in error:", error);
-    }
-  };
-
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Mark all fields as touched
+
+    // Mark all relevant fields as touched
     setTouched({
       email: true,
-      password: true,
-      confirmPassword: true
+      password: true
     });
-    
+
     // Validate the form
     const isValid = validateForm();
-    
+
     if (!isValid) {
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+    setLoginError(null);
+
     try {
-      // Add your email sign-in logic here
-      console.log("Email:", email, "Password:", password);
-      
-      if (isSignUp) {
-        // Register logic
-        // Example: await createUser(email, password);
-      } else {
-        // Login logic
-        // Example: await signIn("credentials", { email, password });
+      // Use NextAuth's signIn function with credentials provider
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false, // Don't redirect automatically
+      });
+
+      if (result?.error) {
+        setLoginError("Invalid email or password. Please try again.");
+      } else if (result?.ok) {
+        // Success, close modal and redirect if needed
+        setIsModalOpen(false);
+        router.refresh(); // Refresh the page to update auth state
       }
     } catch (error) {
       console.error("Authentication error:", error);
+      setLoginError("An unexpected error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -105,8 +102,7 @@ const AuthModal = ({ isModalOpen, setIsModalOpen }: AuthModalProps) => {
 
   const handleGoogleSignIn = async () => {
     try {
-      const res = await signIn("google");
-      console.log(res);
+      await signIn("google", { callbackUrl: window.location.origin });
     } catch (error) {
       console.error("Google sign in error:", error);
     }
@@ -139,7 +135,7 @@ const AuthModal = ({ isModalOpen, setIsModalOpen }: AuthModalProps) => {
       >
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900">
-            {isSignUp ? "Create Account" : "Welcome Back"}
+            Welcome Back
           </h2>
           <button
             onClick={() => setIsModalOpen(false)}
@@ -161,12 +157,19 @@ const AuthModal = ({ isModalOpen, setIsModalOpen }: AuthModalProps) => {
           </button>
         </div>
         <div className="space-y-4">
+          {loginError && (
+            <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
+              {loginError}
+            </div>
+          )}
+
           <div className="relative">
             <div className="absolute inset-0 flex items-center"></div>
           </div>
           {!showEmailForm ? (
             <div className="space-y-4">
               <form onSubmit={handleEmailSignIn} className="space-y-4">
+                {/* Email & Password fields */}
                 <div>
                   <label
                     htmlFor="email"
@@ -180,11 +183,10 @@ const AuthModal = ({ isModalOpen, setIsModalOpen }: AuthModalProps) => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onBlur={() => handleInputBlur('email')}
-                    className={`mt-1 block w-full rounded-md border ${
-                      touched.email && errors.email 
-                        ? "border-red-500 focus:border-red-500 focus:ring-red-500" 
+                    className={`mt-1 block w-full rounded-md border ${touched.email && errors.email
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                         : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                    } px-3 py-2 text-sm focus:outline-none focus:ring-1`}
+                      } px-3 py-2 text-sm focus:outline-none focus:ring-1`}
                     required
                   />
                   {touched.email && errors.email && (
@@ -204,86 +206,48 @@ const AuthModal = ({ isModalOpen, setIsModalOpen }: AuthModalProps) => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     onBlur={() => handleInputBlur('password')}
-                    className={`mt-1 block w-full rounded-md border ${
-                      touched.password && errors.password 
-                        ? "border-red-500 focus:border-red-500 focus:ring-red-500" 
+                    className={`mt-1 block w-full rounded-md border ${touched.password && errors.password
+                        ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                         : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                    } px-3 py-2 text-sm focus:outline-none focus:ring-1`}
+                      } px-3 py-2 text-sm focus:outline-none focus:ring-1`}
                     required
                   />
                   {touched.password && errors.password && (
                     <p className="mt-1 text-sm text-red-500">{errors.password}</p>
                   )}
                 </div>
-                
-                {isSignUp && (
-                  <div>
-                    <label
-                      htmlFor="confirmPassword"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Confirm Password
-                    </label>
-                    <input
-                      type="password"
-                      id="confirmPassword"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      onBlur={() => handleInputBlur('confirmPassword')}
-                      className={`mt-1 block w-full rounded-md border ${
-                        touched.confirmPassword && errors.confirmPassword 
-                          ? "border-red-500 focus:border-red-500 focus:ring-red-500" 
-                          : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
-                      } px-3 py-2 text-sm focus:outline-none focus:ring-1`}
-                      required
-                    />
-                    {touched.confirmPassword && errors.confirmPassword && (
-                      <p className="mt-1 text-sm text-red-500">{errors.confirmPassword}</p>
-                    )}
-                  </div>
-                )}
-                
+
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`w-full rounded-lg px-4 py-2 transition-colors ${
-                    isSubmitting 
-                      ? "bg-gray-400 text-white cursor-not-allowed" 
-                      : "bg-foreground text-background hover:bg-[#494949]"
-                  }`}
+                  className={`w-full rounded-lg px-4 py-2 transition-colors ${isSubmitting
+                      ? "bg-gray-400 text-white cursor-not-allowed"
+                      : "bg-[#493D9E] hover:bg-[#372c86] text-white"
+                    }`}
                 >
                   {isSubmitting ? (
                     <div className="flex items-center justify-center space-x-2">
                       <div className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
-                      <span>{isSignUp ? "Creating Account..." : "Signing In..."}</span>
+                      <span>Signing In...</span>
                     </div>
                   ) : (
-                    isSignUp ? "Sign Up" : "Sign In"
+                    "Sign In"
                   )}
                 </button>
               </form>
-              <p className="text-center text-sm text-gray-600">
-                {isSignUp
-                  ? "Already have an account? "
-                  : "Don't have an account? "}
-                <button
-                  className="text-blue-600 hover:underline"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsSignUp(!isSignUp);
-                    // Reset form when switching modes
-                    setErrors({});
-                    setTouched({
-                      email: false,
-                      password: false,
-                      confirmPassword: false
-                    });
-                    setConfirmPassword("");
-                  }}
+
+              {/* Sign Up Link */}
+              <div className="flex items-center justify-center gap-2">
+                <p className="text-sm text-gray-600">Don't have an account?</p>
+                <Link
+                  href="/signup"
+                  onClick={() => setIsModalOpen(false)}
+                  className="text-[#493D9E] font-medium hover:underline"
                 >
-                  {isSignUp ? "Sign In" : "Sign Up"}
-                </button>
-              </p>
+                  Sign Up
+                </Link>
+              </div>
+
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-gray-300"></div>
@@ -320,34 +284,12 @@ const AuthModal = ({ isModalOpen, setIsModalOpen }: AuthModalProps) => {
                   />
                 </svg>
                 Continue with Google
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleFacebookSignIn();
-                }}
-                className="w-full flex items-center justify-center gap-2 bg-[#1877F2] text-white rounded-lg px-4 py-2 hover:bg-[#1864F2] transition-colors"
-              >
-                <svg
-                  className="w-5 h-5"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                </svg>
-                Continue with Facebook
-              </button>
+              </button>              
             </div>
           ) : (
             <div className="space-y-4">
               <p className="text-center text-sm text-gray-600">
-                Don't have an account?{" "}
-                <button
-                  className="text-blue-600 hover:underline"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  Sign up
-                </button>
+                Please sign in to continue
               </p>
             </div>
           )}

@@ -1,5 +1,6 @@
 "use client";
 import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 
@@ -10,7 +11,7 @@ interface UserDropdownProps {
 const UserDropdown = ({ email }: UserDropdownProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const session = useSession();
   // ปิดดรอปดาวน์เมื่อคลิกที่อื่น
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -60,20 +61,26 @@ const UserDropdown = ({ email }: UserDropdownProps) => {
               My Products
             </div>
           </Link>
-
+        {session.data && session.data.user && session.data.user.is_verified ? (
           <Link href="/my-offer">
             <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
               My Offers
             </div>
           </Link>
-
+        ) : null}
+        {session.data && session.data.user && !session.data.user.is_verified ? (
           <Link href="/verification">
             <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
               Become a Traveler
             </div>
           </Link>
+        ): null}
           <div className="border-t border-gray-200 mt-1"></div>
-
+          <Link href="/profile">
+            <div className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+              Profile
+            </div>
+          </Link>
           <button
             onClick={() => signOut()}
             className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"

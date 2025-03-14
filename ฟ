@@ -30,6 +30,8 @@ function ProductCard() {
 
   // Update allProducts when new data is fetched
   useEffect(() => {
+    console.log("hellowowrld");
+    console.log(allProducts.length);
     productFetch();
 
     // If we're already loading more, don't process this update

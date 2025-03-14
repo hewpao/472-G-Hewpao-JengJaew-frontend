@@ -34,26 +34,35 @@ export default function ProfilePage() {
   const fetchUserData = async () => {
     setLoading(true);
     try {
-      // If your session contains a user ID
-      const userId = session?.user?.id || null;
+      // Check if we have an access token in the session
+      const accessToken = session?.user?.access_token || session?.access_token;
       
-      if (userId) {
-        try {
-          const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASEURL}/user/${userId}`);
-          if (response.ok) {
-            const userData = await response.json();
-            setUser(userData);
-            setFormData(userData);
-          } else {
-            // If API call fails, fallback to basic session data
-            createUserFromSession();
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
+      if (!accessToken) {
+        console.error("No access token available");
+        createUserFromSession();
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASEURL}/profile/me`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (response.ok) {
+          const userData = await response.json();
+          console.log("Fetched user data:", userData);
+          
+          setUser(userData);
+          setFormData(userData);
+        } else {
+          console.error("API Error:", response.status, await response.text());
           createUserFromSession();
         }
-      } else {
-        // If no user ID is available, create from session
+      } catch (error) {
+        console.error("Error fetching user data:", error);
         createUserFromSession();
       }
     } finally {
@@ -85,21 +94,22 @@ export default function ProfilePage() {
   const handleSave = async () => {
     try {
       // You can add API call here to update user profile
-      // const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASEURL}/user/${user.id}`, {
-      //   method: 'PUT',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASEURL}/profile/edit`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.user?.access_token}`,
+        },
+        body: JSON.stringify(formData),
+      });
       
-      // if (response.ok) {
-      //   const updatedUser = await response.json();
-      //   setUser(updatedUser);
-      // } else {
-      //   // Handle error
-      //   console.error('Failed to update profile');
-      // }
+      if (response.ok) {
+        const updatedUser = await response.json();
+        setUser(updatedUser);
+      } else {
+        // Handle error
+        console.error('Failed to update profile');
+      }
       
       // For now, we'll just update the local state
       setUser(formData);

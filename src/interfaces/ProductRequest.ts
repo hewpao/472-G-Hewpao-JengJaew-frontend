@@ -9,3 +9,15 @@ export interface CreateProductRequest {
   from: string;
   to: string;
 }
+
+export enum DeliveryStatus {
+  Opening = "Opening",
+  Pending = "Pending",
+  Purchased = "Purchased",
+  PickedUp = "PickedUp",
+  OutForDelivery = "OutForDelivery",
+  Delivered = "Delivered",
+  Cancel = "Cancel",
+  Returned = "Returned",
+  Refunded = "Refunded",
+}

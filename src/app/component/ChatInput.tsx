@@ -1,11 +1,22 @@
 'use client';
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
-export default function ChatInput({ currentChatId, currentUserId }: { currentChatId: string, currentUserId: string }) {
-
+export default function ChatInput({ 
+    currentChatId, 
+    currentUserId,
+    onMessageSent 
+}: { 
+    currentChatId: string, 
+    currentUserId: string,
+    onMessageSent?: () => void  // Callback for when message is sent
+}) {
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const { data: session } = useSession();
+    
+    const accessToken = session?.user?.access_token || session?.access_token;
 
     const sendMessage = async () => {
         if (!message.trim()) return; // Prevent empty messages
@@ -22,23 +33,32 @@ export default function ChatInput({ currentChatId, currentUserId }: { currentCha
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    ...(accessToken && { "Authorization": `Bearer ${accessToken}` })
                 },
                 body: JSON.stringify(req),
             });
 
             if (!res.ok) {
                 console.error("Failed to send message", await res.text());
+                throw new Error("Failed to send message");
             }
+            
+            // Call the callback to notify parent component
+            if (onMessageSent) {
+                onMessageSent();
+            }
+            
+            // Clear the input field
+            setMessage('');
         } catch (error) {
             console.error("Error sending message:", error);
         } finally {
             setIsLoading(false);
-            setMessage('');
         }
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && !isLoading) {
+        if (e.key === 'Enter' && !isLoading && message.trim()) {
             e.preventDefault();
             sendMessage();
         }
@@ -55,12 +75,6 @@ export default function ChatInput({ currentChatId, currentUserId }: { currentCha
                 placeholder="พิมพ์ข้อความตรงนี้..."
                 disabled={isLoading}
             />
-
-            {/* <div className="cursor-pointer">
-                <svg className="w-8 h-8 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m3 16 5-7 6 6.5m6.5 2.5L16 13l-4.286 6M14 10h.01M4 19h16a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1Z"/>
-                </svg>
-            </div> */}
 
             <button 
                 onClick={sendMessage}
