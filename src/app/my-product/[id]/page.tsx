@@ -1,6 +1,6 @@
 // pages/edit-product/[id].tsx
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import {
   useGetProductRequestByID,
@@ -8,8 +8,6 @@ import {
   useCancelProductRequest,
 } from "@/api/productRequest/useProductRequest";
 import Link from "next/link";
-import { useGetOfferDetailByOfferID } from "@/api/offers/useOffer";
-import { Offer } from "@/interfaces/Offer";
 import { ResponseOffer } from "@/dtos/Offer";
 import OfferDetails from "../component/OfferDetails";
 import { DeliveryStatus } from "@/interfaces/ProductRequest";
@@ -91,10 +89,10 @@ function Page() {
 
   const handleCancelClick = () => {
     setIsEditing(false);
-    setEditedName(product?.["product-request"]?.name);
-    setEditedDesc(product?.["product-request"]?.desc);
-    setEditedCategory(product?.["product-request"]?.category);
-    setEditedQuantity(product?.["product-request"]?.quantity);
+    setEditedName(product!["product-request"]?.name);
+    setEditedDesc(product!["product-request"]?.desc);
+    setEditedCategory(product!["product-request"]?.category);
+    setEditedQuantity(product!["product-request"]?.quantity);
   };
 
   return (
@@ -334,7 +332,10 @@ function Page() {
           )}
         </div>
 
-        <div className="mt-4">
+        <h3 className="font-bold uppercase text-lg tracking-wider my-4">
+          Choose offer
+        </h3>
+        <div className="flex flex-col gap-3">
           {offerList.map((offerId) => (
             <OfferDetails key={offerId} id={offerId} />
           ))}

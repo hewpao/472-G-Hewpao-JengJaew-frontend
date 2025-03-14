@@ -4,6 +4,7 @@ import { GetProductRequestResponseDTO, UpdateProductRequestStatusDTO } from "@/d
 import { useSession } from "next-auth/react";
 import { useGetBuyerProductRequests, useGetTravelerProductRequests, useUpdateProductRequestStatus } from "@/api/productRequest/useProductRequest";
 import MyOfferCard from "./component/MyOfferCard";
+import { ResponseOffer } from "@/dtos/Offer";
 
 enum Status {
   Pending = "Pending",
@@ -31,8 +32,9 @@ function Page() {
       [Status.Delivered]: 0,
     };
 
-    products?.["product-requests"]?.forEach((p:GetProductRequestResponseDTO) => {
-      if (session.data?.user?.id === p.offers.UserID) {
+  products!["product-requests"]?.forEach((p:GetProductRequestResponseDTO) => {
+    // const offer = p.offers as ResponseOffer[];
+      if (p.selected_offer_id) {
         if (p.delivery_status === "Pending"){
           counts[Status.Pending] += 1;
         }else if (p.delivery_status === "Purchased"){

@@ -3,7 +3,10 @@ import {
   useGetProductRequestByID,
   useUpdateProductRequest,
 } from "@/api/productRequest/useProductRequest";
+<<<<<<< HEAD
 import { GetProductRequestResponseDTO, ProductRequestResponse } from "@/dtos/productRequest";
+=======
+>>>>>>> 4d68430e5fa3c449afeea299ab2fb708e5425359
 
 interface OfferDetailsProps {
   id: number;
@@ -25,10 +28,17 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ id }) => {
   const handleSelectOffer = () => {
     useUpdateProduct.mutate(
       {
+<<<<<<< HEAD
         name: productRequest.name,
         desc: productRequest.desc,
         quantity: productRequest.quantity,
         category: productRequest.category,
+=======
+        name: product!["product-request"].name,
+        desc: product!["product-request"].desc,
+        quantity: product!["product-request"].quantity,
+        category: product!["product-request"].category,
+>>>>>>> 4d68430e5fa3c449afeea299ab2fb708e5425359
         selected_offer_id: id,
       },
       {
@@ -39,11 +49,7 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ id }) => {
     );
   };
   return (
-    <div>
-      <h3 className="font-bold uppercase text-sm tracking-wider mb-4">
-        Choose offer
-      </h3>
-
+    <div className="border p-5 rounded-md">
       {traveler ? (
         <div className="grid grid-cols-1 gap-4">
           <h4 className="font-semibold text-lg">{traveler.data?.user?.Name}</h4>

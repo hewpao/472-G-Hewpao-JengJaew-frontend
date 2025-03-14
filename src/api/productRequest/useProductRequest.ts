@@ -5,6 +5,7 @@ import { CreateProductRequest } from "@/interfaces/ProductRequest";
 import {
   GetPaginatedProductRequestRespnoseDTO,
   GetProductRequestResponseDTO,
+  ProductRequestListResponse,
   ProductRequestResponse,
   UpdateProductRequestDTO,
   UpdateProductRequestStatusDTO,
@@ -40,7 +41,7 @@ const createProductRequest = async (
 
 const getProductRquestsByID = async (id: number) => {
   const session = await getSession();
-  const { data } = await axiosInstance.get<GetProductRequestResponseDTO>(
+  const { data } = await axiosInstance.get<ProductRequestResponse>(
     `/product-requests/get/${id}`,
     {
       headers: {
@@ -65,7 +66,7 @@ const getPaginatedProductRequests = async (page: number, limit: number) => {
 
 const getBuyerProductRequests = async () => {
   const session = await getSession();
-  const { data } = await axiosInstance.get<ProductRequestResponse>(
+  const { data } = await axiosInstance.get<ProductRequestListResponse>(
     `/product-requests/get-buyer`,
     {
       headers: {
@@ -77,7 +78,7 @@ const getBuyerProductRequests = async () => {
 };
 const getTravelerProductRequests = async () => {
   const session = await getSession();
-  const { data } = await axiosInstance.get<ProductRequestResponse>(
+  const { data } = await axiosInstance.get<ProductRequestListResponse>(
     `/product-requests/get-traveler`,
     {
       headers: {

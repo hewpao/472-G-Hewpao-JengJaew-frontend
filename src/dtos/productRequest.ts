@@ -1,8 +1,13 @@
 import { ResponseOffer } from "./Offer";
 
-export interface ProductRequestResponse {
+export interface ProductRequestListResponse {
   message: string;
   "product-requests": GetProductRequestResponseDTO[];
+}
+
+export interface ProductRequestResponse {
+  message: string;
+  "product-request": GetProductRequestResponseDTO;
 }
 
 export interface GetProductRequestResponseDTO {
