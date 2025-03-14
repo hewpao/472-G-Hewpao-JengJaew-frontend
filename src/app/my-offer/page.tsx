@@ -12,7 +12,7 @@ function Page() {
   const session = useSession();
   const [selectedStatus, setSelectedStatus] = useState<string>("Pending");
 
-  const { data: products, isLoading: loading } = useGetTravelerProductRequests();
+  const { data: products, isLoading: loading, refetch: refetchdata } = useGetTravelerProductRequests();
   const productList = products?.["product-requests"] as GetProductRequestResponseDTO[]
   
   const counts = {
@@ -63,7 +63,7 @@ function Page() {
             className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "PickedUp" ? "bg-gray-200" : ""}`}
             onClick={() => setSelectedStatus("PickedUp")}
           >
-            {counts[DeliveryStatus.PickedUp]} {"PickedUp"}
+            {counts[DeliveryStatus.PickedUp]} {"Picked Up"}
         </button>
         <button
             className={`w-full py-2 border-r border-gray-300 hover:bg-gray-200 ${selectedStatus === "OutForDelivery" ? "bg-gray-200" : ""}`}
@@ -81,7 +81,7 @@ function Page() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredProducts.map((product: GetProductRequestResponseDTO) => (
-          <MyOfferCard key={product.id} product={product} />
+          <MyOfferCard key={product.id} product={product} refetch={refetchdata}/>
         ))}
       </div>
     </div>

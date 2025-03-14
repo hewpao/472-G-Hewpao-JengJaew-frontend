@@ -2,7 +2,7 @@ import { useUpdateProductRequestStatus } from "@/api/productRequest/useProductRe
 import { GetProductRequestResponseDTO,UpdateProductRequestStatusDTO } from "@/dtos/productRequest";
 import { useState } from "react";
 
-const MyOfferCard = ({ product }: { product: GetProductRequestResponseDTO }) => {
+const MyOfferCard = ({ product,refetch }: { product: GetProductRequestResponseDTO; refetch: () => void },) => {
 	const [currentStatus, setCurrentStatus] = useState<string>(
 		product.delivery_status
 	  );
@@ -10,7 +10,7 @@ const MyOfferCard = ({ product }: { product: GetProductRequestResponseDTO }) => 
 	const [newStatus, setNewStatus] = useState<string>(product.delivery_status);
 	
 	const updateProductStatus = useUpdateProductRequestStatus(product.id);
-	const deliveryStatus = ["Pending","Purchased","PickedUp","OutForDelivery","Delivered"]
+	const deliveryStatus = ["Pending","Purchased","PickedUp","Cancel"]
 	
 	const handleStatusChange = () => {
 		setIsEditingStatus(true);
@@ -27,6 +27,7 @@ const MyOfferCard = ({ product }: { product: GetProductRequestResponseDTO }) => 
 			onSuccess: () => {
 			setCurrentStatus(newStatus);
 			setIsEditingStatus(false);
+			refetch();
 		},
 		});
 		} else {
