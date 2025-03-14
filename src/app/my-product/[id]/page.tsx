@@ -1,5 +1,6 @@
 // pages/edit-product/[id].tsx
 "use client";
+import Image from "next/image";
 import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import {
@@ -70,7 +71,6 @@ function Page() {
   };
 
   const handleCancelOrder = () => {
-    console.log("cancel clicked");
     useCancelProduct.mutate(
       {
         delivery_status: DeliveryStatus.Cancel,
@@ -112,9 +112,11 @@ function Page() {
             <div>
               <div className="flex mb-6">
                 <div className="mr-4 border border-gray-200 rounded-md overflow-hidden w-24 h-24 flex-shrink-0">
-                  <img
-                    src={product?.["product-request"]?.images[0]}
-                    alt={product?.["product-request"]?.name}
+                  <Image
+                    src={product!["product-request"]?.images[0]}
+                    alt={product!["product-request"]?.name}
+                    width={180}
+                    height={180}
                     className="w-full h-full object-cover hover:scale-105 transition-transform"
                   />
                 </div>
@@ -203,12 +205,20 @@ function Page() {
           ) : (
             <>
               <div className="flex mb-6">
-                <div className="mr-4 border border-gray-200 rounded-md overflow-hidden w-24 h-24 flex-shrink-0">
-                  <img
-                    src={product?.["product-request"]?.images[0]}
-                    alt={product?.["product-request"]?.name}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform"
-                  />
+                <div className="grid grid-cols-3 w-full gap-4">
+                  {product?.["product-request"].images.map((image, index) => {
+                    return (
+                      <div key={index}>
+                        <Image
+                          src={image}
+                          alt={product!["product-request"]?.name}
+                          width={180}
+                          height={180}
+                          className="w-full h-48 object-cover hover:scale-105 transition-transform rounded-md"
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -261,47 +271,7 @@ function Page() {
                 </div>
               </div>
 
-              <div className="mt-8">
-                {/* <div className="flex justify-between items-center font-bold">
-                                    <div>Estimated total</div>
-                                    <div className="text-right">$12,424.91</div>
-                                </div>
-                                <p className="text-gray-500 text-sm mt-2">
-                                    Final price will be calculated based on your traveler's requested delivery reward.
-                                </p>
-        
-                                <div className="bg-gray-50 rounded-md p-4 mt-4">
-                                    <div className="grid grid-cols-[1fr,auto] gap-y-3 gap-x-4">
-                                        <div className="text-gray-500 flex items-center">
-                                            Product price
-                                        </div>
-                                        <div className="text-right">{product?.['product-request']?.budget}</div>
-        
-                                        <div className="text-gray-500 flex items-center">
-                                            US Sales tax
-                                        </div>
-                                        <div className="text-right">$800.00</div>
-        
-                                        <div className="text-gray-500 flex items-center">
-                                            Traveler reward
-                                        </div>
-                                        <div className="text-right">$630.00</div>
-        
-                                        <div className="text-gray-500 flex items-center">
-                                            Grabr fee
-                                        </div>
-                                        <div className="text-right">$373.66</div>
-        
-                                        <div className="text-gray-500 flex items-center">
-                                            Payment processing
-                                            <div className="ml-1 text-gray-400 cursor-help rounded-full border border-gray-300 w-4 h-4 flex items-center justify-center text-xs hover:bg-gray-100 transition-colors">
-                                                ?
-                                            </div>
-                                        </div>
-                                        <div className="text-right">$621.25</div>
-                                    </div>
-                                </div> */}
-              </div>
+              <div className="mt-8"></div>
 
               <div className="grid grid-cols-2 gap-4 mt-4">
                 <button

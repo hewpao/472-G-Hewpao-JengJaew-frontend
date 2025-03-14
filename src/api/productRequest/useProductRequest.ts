@@ -26,7 +26,7 @@ const createProductRequest = async (
   formData.append("to", newProductRequest.to);
   formData.append("check_service", newProductRequest.check_service.toString());
 
-  newProductRequest.images.forEach((image, index) => {
+  newProductRequest.images.forEach((image) => {
     formData.append(`images`, image);
   });
 
