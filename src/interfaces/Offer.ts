@@ -1,5 +1,5 @@
 import { CreateProductRequest } from "./ProductRequest";
-import { User } from "./User";
+import { User } from "@/dtos/User";
 
 export interface Offer {
   id: number;
@@ -7,5 +7,5 @@ export interface Offer {
   product_request?: CreateProductRequest;
   user_id: string;
   user?: User;
-  OfferDate: string;
+  offer_date: string;
 }

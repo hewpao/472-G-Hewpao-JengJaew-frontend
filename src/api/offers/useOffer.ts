@@ -26,8 +26,9 @@ const getOfferDetailByOfferID = async (id: number) => {
 
 const useGetOfferDetailByOfferID = (id:number) =>{
   return useQuery({
-    queryKey: ["offers"],
+    queryKey: ["offers",id],
     queryFn: () => getOfferDetailByOfferID(id),
+    staleTime: 5 * 60 * 1000,
   })
 }
 

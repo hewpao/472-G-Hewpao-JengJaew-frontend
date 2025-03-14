@@ -1,17 +1,23 @@
 // pages/edit-product/[id].tsx
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useGetProductRequestByID, useUpdateProductRequest } from '@/api/productRequest/useProductRequest';
 import Link from 'next/link';
+import { useGetOfferDetailByOfferID } from '@/api/offers/useOffer';
+import { Offer } from '@/interfaces/Offer';
+import { ResponseOffer } from '@/dtos/Offer';
+import OfferDetails from '../component/OfferDetails';
 
 function Page(){
     const router = useParams();
     const { id } = router;
-    
+
     const { data: product, isLoading: loading } = useGetProductRequestByID(Number(id));
-    const mutation = useUpdateProductRequest(Number(id));    
+    const useUpdateProduct = useUpdateProductRequest(Number(id));
     
+    const offerList: number[] = product?.['product-request'].offers?.map((offer: ResponseOffer) => offer.ID) || [];
+
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState("");
     const [editedDesc, setEditedDesc] = useState("");
@@ -28,13 +34,17 @@ function Page(){
                 setEditedQuantity(product?.['product-request']?.quantity);
             }
     },[product])
+    
+    if(loading){
+        return <div>..Loading</div>;
+    }
 
     const handleEditClick = () => {
         setIsEditing(true);
       };
       
     const handleSaveClick = () => {
-        mutation.mutate({
+        useUpdateProduct.mutate({
             name: editedName,
             desc: editedDesc,
             quantity: editedQuantity,
@@ -244,12 +254,11 @@ function Page(){
 	                
 	        </div>
 	
-	        <div className="mt-8">
-	            <h3 className="font-bold uppercase text-sm tracking-wider mb-4">Choose offer</h3>
-	            <div className="border border-gray-200 rounded-lg p-8 flex items-center justify-center text-gray-500">
-	                You have no delivery offers yet.
-	            </div>
-	        </div>
+            <div className="mt-4">
+                {offerList.map((offerId) => (
+                    <OfferDetails key={offerId} id={offerId} />
+                ))}
+            </div>
 	    </div>
 	
 
