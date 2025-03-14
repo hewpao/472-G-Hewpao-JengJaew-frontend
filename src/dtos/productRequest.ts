@@ -45,3 +45,7 @@ export interface UpdateProductRequestDTO{
 
   selected_offer_id: number;
 }
+export interface UpdateProductRequestStatusDTO{
+  delivery_status:string;
+  notify_provider:string;
+} 
