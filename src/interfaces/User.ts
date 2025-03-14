@@ -3,6 +3,7 @@ export interface User {
   name: string;
   middle_name?: string | null;
   surname: string;
+  is_verified: boolean;
   email: string;
   phone_number?: string | null;
 }

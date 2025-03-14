@@ -16,6 +16,7 @@ export interface LoginResponseDTO {
   email: string;
   name: string;
   middle_name?: string | null;
+  is_verified: boolean;
   surname: string;
   access_token: string;
 }
