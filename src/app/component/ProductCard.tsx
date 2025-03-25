@@ -135,7 +135,7 @@ function ProductCard() {
           return (
             <div
               key={product.id}
-              className="border-2 border-dark-primary rounded-lg p-4 shadow-md bg-white hover:shadow-xl transition-all duration-200 flex flex-col h-full"
+              className="rounded-lg p-4 shadow-md bg-white hover:shadow-lg transition-all duration-200 flex flex-col h-full"
             >
               {/* Product Image - with error handling */}
               <div className="w-full h-48 flex items-center justify-center bg-[#00000000]">

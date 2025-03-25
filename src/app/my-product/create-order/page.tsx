@@ -4,6 +4,8 @@ import ProgressIndicator from "../../component/ProgressIndicator";
 import ImageUpload from "../../component/ImageUpload";
 import { useCreateProductRequest } from "@/api/productRequest/useProductRequest";
 import { useRouter } from "next/navigation";
+import DOMPurify from "dompurify";
+import Image from "next/image";
 
 interface OrderRequest {
   name: string;
@@ -158,7 +160,7 @@ function CreateOrderPage() {
         desc: true,
         images: true,
         budget: true,
-        quantity: true
+        quantity: true,
       });
       return;
     }
@@ -167,10 +169,10 @@ function CreateOrderPage() {
     if (!isStep2Valid) {
       setStep(2);
       // Mark all step 2 fields as touched
-      setTouched(prev => ({
+      setTouched((prev) => ({
         ...prev,
         from: true,
-        to: true
+        to: true,
       }));
       return;
     }
@@ -203,19 +205,23 @@ function CreateOrderPage() {
     }));
 
     // Mark field as touched when changed
-    setTouched(prev => ({
+    setTouched((prev) => ({
       ...prev,
-      [name]: true
+      [name]: true,
     }));
   };
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleBlur = (
+    e: React.FocusEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name } = e.target;
 
     // Mark field as touched when blurred
-    setTouched(prev => ({
+    setTouched((prev) => ({
       ...prev,
-      [name]: true
+      [name]: true,
     }));
   };
 
@@ -231,9 +237,9 @@ function CreateOrderPage() {
     }));
 
     // Mark images as touched
-    setTouched(prev => ({
+    setTouched((prev) => ({
       ...prev,
-      images: true
+      images: true,
     }));
   }, []);
 
@@ -241,9 +247,9 @@ function CreateOrderPage() {
     setOrderData((prev) => ({ ...prev, images: newImages }));
 
     // Mark images as touched
-    setTouched(prev => ({
+    setTouched((prev) => ({
       ...prev,
-      images: true
+      images: true,
     }));
   };
 
@@ -277,8 +283,8 @@ function CreateOrderPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   className={`mt-1 block w-full rounded-md border ${
-                    touched.name && errors.name 
-                      ? "border-red-500 focus:border-red-500 focus:ring-red-500" 
+                    touched.name && errors.name
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                       : "border-gray-300 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   } px-3 py-2 text-sm`}
                   required
@@ -298,8 +304,8 @@ function CreateOrderPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   className={`mt-1 block w-full rounded-md border ${
-                    touched.category && errors.category 
-                      ? "border-red-500 focus:border-red-500 focus:ring-red-500" 
+                    touched.category && errors.category
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                       : "border-gray-300 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   } px-3 py-2 text-sm`}
                   required
@@ -328,8 +334,8 @@ function CreateOrderPage() {
                   onBlur={handleBlur}
                   rows={4}
                   className={`mt-1 block w-full rounded-md border ${
-                    touched.desc && errors.desc 
-                      ? "border-red-500 focus:border-red-500 focus:ring-red-500" 
+                    touched.desc && errors.desc
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                       : "border-gray-300 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   } px-3 py-2 text-sm`}
                   required
@@ -368,11 +374,11 @@ function CreateOrderPage() {
                   value={orderData.budget}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  min="0"
+                  min="500"
                   step="100"
                   className={`mt-1 block w-full rounded-md border ${
-                    touched.budget && errors.budget 
-                      ? "border-red-500 focus:border-red-500 focus:ring-red-500" 
+                    touched.budget && errors.budget
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                       : "border-gray-300 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   } px-3 py-2 text-sm`}
                   required
@@ -407,8 +413,8 @@ function CreateOrderPage() {
                   onBlur={handleBlur}
                   min="1"
                   className={`mt-1 block w-full rounded-md border ${
-                    touched.quantity && errors.quantity 
-                      ? "border-red-500 focus:border-red-500 focus:ring-red-500" 
+                    touched.quantity && errors.quantity
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                       : "border-gray-300 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   } px-3 py-2 text-sm`}
                   required
@@ -440,7 +446,8 @@ function CreateOrderPage() {
                   htmlFor="check_service"
                   className="ml-2 text-sm text-gray-700"
                 >
-                  200 THB for Verify Product Service <span className="text-[#696969]">(Optional)</span>
+                  200 THB for Verify Product Service{" "}
+                  <span className="text-[#696969]">(Optional)</span>
                 </label>
               </div>
             </>
@@ -460,8 +467,8 @@ function CreateOrderPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   className={`mt-1 block w-full rounded-md border ${
-                    touched.from && errors.from 
-                      ? "border-red-500 focus:border-red-500 focus:ring-red-500" 
+                    touched.from && errors.from
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                       : "border-gray-300 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   } px-3 py-2 text-sm`}
                   required
@@ -483,8 +490,8 @@ function CreateOrderPage() {
                   onChange={handleChange}
                   onBlur={handleBlur}
                   className={`mt-1 block w-full rounded-md border ${
-                    touched.to && errors.to 
-                      ? "border-red-500 focus:border-red-500 focus:ring-red-500" 
+                    touched.to && errors.to
+                      ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                       : "border-gray-300 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                   } px-3 py-2 text-sm`}
                   required
@@ -513,9 +520,11 @@ function CreateOrderPage() {
                       key={index}
                       className="relative w-[150px] h-[150px] border border-gray-300 rounded-md overflow-hidden"
                     >
-                      <img
-                        src={URL.createObjectURL(file)}
+                      <Image
+                        src={DOMPurify.sanitize(URL.createObjectURL(file))}
                         alt={`Preview ${index + 1}`}
+                        width={180}
+                        height={180}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -529,27 +538,35 @@ function CreateOrderPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-gray-600">
-                      <span className="font-semibold">Product:</span> {orderData.name}
+                      <span className="font-semibold">Product:</span>{" "}
+                      {orderData.name}
                     </p>
                     <p className="text-sm text-gray-600">
-                      <span className="font-semibold">Category:</span> {orderData.category}
+                      <span className="font-semibold">Category:</span>{" "}
+                      {orderData.category}
                     </p>
                     <p className="text-sm text-gray-600">
-                      <span className="font-semibold">Budget:</span> {orderData.budget} THB
+                      <span className="font-semibold">Budget:</span>{" "}
+                      {orderData.budget} THB
                     </p>
                     <p className="text-sm text-gray-600">
-                      <span className="font-semibold">Quantity:</span> {orderData.quantity}
+                      <span className="font-semibold">Quantity:</span>{" "}
+                      {orderData.quantity}
                     </p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-600">
-                      <span className="font-semibold">Deliver from:</span> {orderData.from}
+                      <span className="font-semibold">Deliver from:</span>{" "}
+                      {orderData.from}
                     </p>
                     <p className="text-sm text-gray-600">
-                      <span className="font-semibold">Deliver to:</span> {orderData.to}
+                      <span className="font-semibold">Deliver to:</span>{" "}
+                      {orderData.to}
                     </p>
                     <p className="text-sm text-gray-600">
-                      <span className="font-semibold">Verify Product Service:</span>{" "}
+                      <span className="font-semibold">
+                        Verify Product Service:
+                      </span>{" "}
                       {orderData.check_service ? "Yes (+200 THB)" : "No"}
                     </p>
                   </div>
@@ -564,7 +581,10 @@ function CreateOrderPage() {
                 </div>
                 <div className="mt-4 pt-3 border-t border-gray-300">
                   <p className="text-lg font-bold text-gray-900">
-                    Total Price: {orderData.budget * orderData.quantity + (orderData.check_service ? 200 : 0)} THB
+                    Total Price:{" "}
+                    {orderData.budget * orderData.quantity +
+                      (orderData.check_service ? 200 : 0)}{" "}
+                    THB
                   </p>
                 </div>
               </div>
@@ -595,7 +615,7 @@ function CreateOrderPage() {
                 type="button" // Changed from type="submit" to type="button"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                className={`ml-auto ${isSubmitting ? 'bg-green-400' : 'bg-green-500 hover:bg-green-600'} text-white px-4 py-2 rounded-lg transition-colors flex items-center`}
+                className={`ml-auto ${isSubmitting ? "bg-green-400" : "bg-green-500 hover:bg-green-600"} text-white px-4 py-2 rounded-lg transition-colors flex items-center`}
               >
                 {isSubmitting ? (
                   <>

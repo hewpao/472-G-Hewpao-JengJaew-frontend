@@ -73,7 +73,7 @@ export default function LandingPageBody() {
               <div className="flex items-center justify-center h-64 md:h-96 w-full">
 
                 <Image
-                  src="/images/HP5.png"
+                  src="/images/HP5-1.png"
                   alt="Hewpao service illustration"
                   width={300}
                   height={300}

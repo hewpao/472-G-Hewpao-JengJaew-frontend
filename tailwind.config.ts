@@ -18,6 +18,10 @@ export default {
         accent: "#FFF2AF"
       },
     },
+    boxShadow: {
+      md: '0 4px 6px -1px rgba(34, 29, 87, 1)',
+      lg: '0 10px 15px -3px rgba(34, 29, 87, 0.75)',
+    }
   },
   plugins: [],
 } satisfies Config;

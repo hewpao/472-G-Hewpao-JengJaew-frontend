@@ -58,35 +58,35 @@ function Page() {
       <h1 className="text-3xl font-bold text-gray-900 mb-6">My Offers</h1>
       <div className="mb-4 flex gap-2">
         <button
-          className={`w-1/5 py-2 text-white font-medium rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-gray-200 hover:scale-105 ${selectedStatus === DeliveryStatus.Pending ? "bg-primary text-white" : "bg-secondary"}`}
+          className={`w-1/5 py-2 text-white font-medium rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-primary hover:scale-105 ${selectedStatus === DeliveryStatus.Pending ? "bg-primary text-white" : "bg-secondary"}`}
           onClick={() => setSelectedStatus(DeliveryStatus.Pending)}
         >
           {counts[DeliveryStatus.Pending]} {"Pending"}
         </button>
 
         <button
-          className={`w-1/5 py-2 text-white font-medium rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-gray-200 hover:scale-105 ${selectedStatus === DeliveryStatus.Purchased ? "bg-primary text-white" : "bg-secondary"}`}
+          className={`w-1/5 py-2 text-white font-medium rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-primary hover:scale-105 ${selectedStatus === DeliveryStatus.Purchased ? "bg-primary text-white" : "bg-secondary"}`}
           onClick={() => setSelectedStatus(DeliveryStatus.Purchased)}
         >
           {counts[DeliveryStatus.Purchased]} {"Purchased"}
         </button>
 
         <button
-          className={`w-1/5 py-2 text-white font-medium rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-gray-200 hover:scale-105 ${selectedStatus === DeliveryStatus.PickedUp ? "bg-primary text-white" : "bg-secondary"}`}
+          className={`w-1/5 py-2 text-white font-medium rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-primary hover:scale-105 ${selectedStatus === DeliveryStatus.PickedUp ? "bg-primary text-white" : "bg-secondary"}`}
           onClick={() => setSelectedStatus(DeliveryStatus.PickedUp)}
         >
           {counts[DeliveryStatus.PickedUp]} {"Picked Up"}
         </button>
 
         <button
-          className={`w-1/5 py-2 text-white font-medium rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-gray-200 hover:scale-105 ${selectedStatus === DeliveryStatus.OutForDelivery ? "bg-primary text-white" : "bg-secondary"}`}
+          className={`w-1/5 py-2 text-white font-medium rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-primary hover:scale-105 ${selectedStatus === DeliveryStatus.OutForDelivery ? "bg-primary text-white" : "bg-secondary"}`}
           onClick={() => setSelectedStatus(DeliveryStatus.OutForDelivery)}
         >
           {counts[DeliveryStatus.OutForDelivery]} {"Out For Delivery"}
         </button>
 
         <button
-          className={`w-1/5 py-2 text-white font-medium rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-gray-200 hover:scale-105 ${selectedStatus === DeliveryStatus.Delivered ? "bg-primary text-white" : "bg-secondary"}`}
+          className={`w-1/5 py-2 text-white font-medium rounded-lg shadow-md transition duration-300 ease-in-out transform hover:bg-primary hover:scale-105 ${selectedStatus === DeliveryStatus.Delivered ? "bg-primary text-white" : "bg-secondary"}`}
           onClick={() => setSelectedStatus(DeliveryStatus.Delivered)}
         >
           {counts[DeliveryStatus.Delivered]} {"Delivered"}

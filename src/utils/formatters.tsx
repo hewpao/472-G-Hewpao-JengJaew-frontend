@@ -35,3 +35,31 @@ export const formatDate = (
 ): string => {
   return new Date(dateString).toLocaleDateString("en-US", options);
 };
+
+export function getStatusColor(status: string): string {
+  switch (status.toLowerCase()) {
+    case 'completed':
+      return 'bg-green-100 text-green-800';
+    case 'pending':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'failed':
+      return 'bg-red-100 text-red-800';
+    case 'processing':
+      return 'bg-blue-100 text-blue-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+}
+
+export function truncateString(str: string, length: number = 20): string {
+  if (str.length <= length) return str;
+  return `${str.substring(0, length)}...`;
+}
+
+export function getTransactionTypeIcon(type: string) {
+  return type.toLowerCase() === 'payment' ? 'arrow-up-right' : 'arrow-down-left';
+}
+
+export function getTransactionTypeColor(type: string) {
+  return type.toLowerCase() === 'payment' ? 'text-red-500' : 'text-green-500';
+}

@@ -2,6 +2,8 @@
 
 import { useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
+import Image from "next/image";
+import DOMPurify from "dompurify";
 
 interface ImageUploadProps {
   maxImages?: number;
@@ -36,7 +38,7 @@ const ImageUpload = ({
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      "image/*": []
+      "image/*": [],
     },
     maxFiles: maxImages,
   });
@@ -66,9 +68,11 @@ const ImageUpload = ({
             key={index}
             className="relative w-[150px] h-[150px] border border-gray-300 rounded-md overflow-hidden"
           >
-            <img
-              src={URL.createObjectURL(file)}
+            <Image
+              src={DOMPurify.sanitize(URL.createObjectURL(file))}
               alt={`Preview ${index + 1}`}
+              width={180}
+              height={180}
               className="w-full h-full object-cover transition-opacity hover:opacity-75"
             />
 

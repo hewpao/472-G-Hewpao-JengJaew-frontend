@@ -4,7 +4,8 @@ import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import AuthModal from "./AuthModal"; // Import the AuthModal component
-import UserDropdown from "./UserDropdown"; // Import the UserDropdown component
+import UserDropdown from "./UserDropdown";
+import Image from "next/image"; // Import the UserDropdown component
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -36,7 +37,15 @@ const Navbar = () => {
     <>
       <nav className="grid grid-cols-3 px-6 py-4 bg-white shadow-sm items-center">
         <Link href="/" className="w-fit">
-          <div className="text-primary text-xl font-bold hover:text-dark-primary ease-in-out duration-300">HewPao</div>
+          <div className="text-primary text-xl font-bold hover:text-dark-primary ease-in-out duration-300 flex items-center gap-3">
+            <Image
+                src="/images/HP5-1.png"
+                alt="Hewpao service illustration"
+                width={30}
+                height={30}
+            />
+            <div>HewPao</div>
+          </div>
         </Link>
         <div className="flex justify-center gap-20">
             <div>

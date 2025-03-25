@@ -50,7 +50,7 @@ const OfferDetails: React.FC<OfferDetailsProps> = ({ id }) => {
               : "No Date"}
           </p>
           <button
-            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
+            className="mt-2 px-4 py-2 bg-primary text-white rounded-lg"
             onClick={handleSelectOffer}
           >
             Select Offer
